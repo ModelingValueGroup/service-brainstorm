@@ -16,11 +16,31 @@
 package template;
 
 import org.modelingvalue.collections.List;
+import org.modelingvalue.collections.Set;
 import org.modelingvalue.dclare.Constant;
+import org.modelingvalue.dclare.Mutable;
+import org.modelingvalue.dclare.MutableClass;
+import org.modelingvalue.dclare.Observer;
+import org.modelingvalue.dclare.Setable;
 
-public class Person {
+public class Person implements Mutable {
 
-    private static final Constant<Person, List<Leg>> LEGS = Constant.of("LEGS", List.of());
+    private static final Constant<Person, List<Leg>> LEGS    = Constant.of("LEGS", List.of(), true);
+
+    private static final MutableClass                D_CLASS =                                      //
+            new MutableClass() {
+
+                @Override
+                public Set<? extends Observer<?>> dObservers() {
+                    return Set.of();
+                }
+
+                @Override
+                public Set<? extends Setable<? extends Mutable, ?>> dSetables() {
+                    return Set.of(LEGS);
+                }
+
+            };
 
     public List<Leg> getLegs() {
         return LEGS.get(this);
@@ -28,6 +48,11 @@ public class Person {
 
     public void setLegs(List<Leg> legs) {
         LEGS.set(this, legs);
+    }
+
+    @Override
+    public MutableClass dClass() {
+        return D_CLASS;
     }
 
 }
