@@ -11,4 +11,8 @@ public class Person {
         return LEGS.get(this);
     }
 
+    public void setLegs(List<Leg> legs) {
+        LEGS.set(this, legs);
+    }
+
 }
