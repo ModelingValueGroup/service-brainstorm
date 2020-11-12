@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="template-Main" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="template.Main" />
-    <module name="helloworld" />
+    <module name="serviceBrainstorm" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="template.*" />

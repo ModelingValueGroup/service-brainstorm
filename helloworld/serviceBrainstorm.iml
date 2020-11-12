@@ -2,9 +2,9 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../helloworld">
-      <sourceFolder url="file://$MODULE_DIR$/../helloworld/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../helloworld/tst" isTestSource="true" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tst" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -15,5 +15,7 @@
     <orderEntry type="library" scope="TEST" name="gen: junit-platform-engine" level="project" />
     <orderEntry type="library" scope="TEST" name="gen: junit-platform-launcher" level="project" />
     <orderEntry type="library" scope="TEST" name="gen: opentest4j" level="project" />
+    <orderEntry type="library" name="gen: dclare" level="project" />
+    <orderEntry type="library" name="gen: immutable-collections" level="project" />
   </component>
 </module>
