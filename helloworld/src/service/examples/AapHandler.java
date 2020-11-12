@@ -14,8 +14,4 @@ public class AapHandler implements ServiceHandler {
     public List<String> handle(Request r) {
         return Arrays.asList("burp aap", "👋👋👋");
     }
-
-    public String toString() {
-        return "[" + getMethodPattern() + ";" + getPathPattern() + "]";
-    }
 }

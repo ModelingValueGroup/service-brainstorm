@@ -14,8 +14,4 @@ public class PostHandler implements ServiceHandler {
     public List<String> handle(Request r) {
         return Arrays.asList("burp post", "👋👋👋");
     }
-
-    public String toString() {
-        return "[" + getMethodPattern() + ";" + getPathPattern() + "]";
-    }
 }
