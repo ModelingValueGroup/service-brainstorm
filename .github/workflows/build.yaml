@@ -127,11 +127,26 @@ jobs:
 
           cat <<EOF >Dockerfile
           FROM ubuntu:latest
+
           LABEL org.opencontainers.image.source="https://github.com/${{github.repository}}" \
                 org.opencontainers.image.title="service brainstorm image" \
                 org.opencontainers.image.description="service brainstorm image"
+
+          # copy our files:
           COPY runServer.sh /
           COPY out/artifacts/serviceBrainstorm.jar /
+
+          # install OpenJDK-11:
+          RUN apt-get update && \
+            apt-get install -y openjdk-11-jdk && \
+            apt-get install -y ant && \
+            apt-get clean;
+
+          # setup JAVA_HOME:
+          ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+          RUN export JAVA_HOME
+
+          # ...and run:
           ENTRYPOINT ["/runServer.sh"]
           EOF
 
