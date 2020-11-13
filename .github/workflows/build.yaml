@@ -120,9 +120,8 @@ jobs:
           cat <<EOF >runServer.sh
           #!/bin/bash
           echo "serviceBrainstorm server starting..."
-          java -version
-          java -jar /serviceBrainstorm.jar
-          echo "serviceBrainstorm server stopped..."
+          ( java -jar /serviceBrainstorm.jar; echo "serviceBrainstorm server stopped...") &
+          echo "serviceBrainstorm server started"
           EOF
           chmod +x runServer.sh
 
@@ -165,4 +164,4 @@ jobs:
 
 #
 # deploy with:
-#   docker run -p 80:11080 -p 443:11443 ghcr.io/modelingvaluegroup/service-brainstorm:servicesetup
+#   docker run -it -p 80:11080 -p 443:11443 ghcr.io/modelingvaluegroup/service-brainstorm:servicesetup
