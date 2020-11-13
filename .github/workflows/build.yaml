@@ -70,26 +70,26 @@ jobs:
       - name: "publish action-artifact jar"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld.jar
-          path: out/artifacts/helloworld.jar
+          name: serviceBrainstorm.jar
+          path: out/artifacts/serviceBrainstorm.jar
 
       - name: "publish action-artifact sources"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-sources.jar
-          path: out/artifacts/helloworld-sources.jar
+          name: serviceBrainstorm-sources.jar
+          path: out/artifacts/serviceBrainstorm-sources.jar
 
       - name: "publish action-artifact javadoc"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-javadoc.jar
-          path: out/artifacts/helloworld-javadoc.jar
+          name: serviceBrainstorm-javadoc.jar
+          path: out/artifacts/serviceBrainstorm-javadoc.jar
 
       - name: "publish action-artifact test-results"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-testresults.jar
-          path: out/artifacts/helloworld-testresults.jar
+          name: serviceBrainstorm-testresults.jar
+          path: out/artifacts/serviceBrainstorm-testresults.jar
 
       - name: "if NOT master: saving snapshots for other projects on this branch"
         if: github.ref != 'refs/heads/master'
@@ -107,4 +107,4 @@ jobs:
         uses: ModelingValueGroup/upload-maven-package-action@master
         if  : github.ref == 'refs/heads/master'
         with:
-          file : "out/artifacts/helloworld.jar"
+          file : "out/artifacts/serviceBrainstorm.jar"
