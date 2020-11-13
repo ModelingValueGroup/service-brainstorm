@@ -138,7 +138,7 @@ jobs:
       - ########################################################################################################
         name: "build and publish image"
         run: |
-          branch="$(sed 's|.*/||' <<<${{github.repository}})"
+          branch="$(sed 's|[^a-z]||g' <<<${GITHUB_REF#refs/heads/})"
           docker build --label org.opencontainers.image.revision=${{github.sha}} --iidfile serviceBrainstorm.id .
           docker tag    "$(cat serviceBrainstorm.id)" "ghcr.io/${{github.repository}}:$branch"
           docker login  "ghcr.io" -u ${{github.repository_owner}} --password-stdin <<<"${{secrets.ALLREP_TOKEN}}"
