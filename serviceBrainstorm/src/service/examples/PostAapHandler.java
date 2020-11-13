@@ -19,7 +19,7 @@ import java.util.*;
 
 import service.*;
 
-public class PostAapHandler implements ServiceHandler {
+public class PostAapHandler implements SimpleHandler {
     @Override
     public String getMethodPattern() {
         return "POST";
@@ -31,7 +31,7 @@ public class PostAapHandler implements ServiceHandler {
     }
 
     @Override
-    public List<String> handle(Request r) {
+    public List<String> handle(SimpleRequest r) {
         return Arrays.asList("burp post aap", "👋👋👋");
     }
 }

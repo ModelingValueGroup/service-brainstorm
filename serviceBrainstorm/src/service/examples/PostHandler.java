@@ -19,14 +19,14 @@ import java.util.*;
 
 import service.*;
 
-public class PostHandler implements ServiceHandler {
+public class PostHandler implements SimpleHandler {
     @Override
     public String getMethodPattern() {
         return "POST";
     }
 
     @Override
-    public List<String> handle(Request r) {
+    public List<String> handle(SimpleRequest r) {
         return Arrays.asList("burp post", "👋👋👋");
     }
 }

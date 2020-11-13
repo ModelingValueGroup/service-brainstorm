@@ -20,7 +20,7 @@ import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class Request {
+public class SimpleRequest {
     public final String              method;
     public final String              path;
     public final String              protocol;
@@ -28,7 +28,7 @@ public class Request {
     public final List<String>        bodyLines;
     public final BufferedWriter      writer;
 
-    public Request(Socket socket, Charset encoding) {
+    public SimpleRequest(Socket socket, Charset encoding) {
         try {
             BufferedReader reader      = new BufferedReader(new InputStreamReader(socket.getInputStream(), encoding.name()));
             String         requestLine = reader.readLine();

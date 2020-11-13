@@ -15,17 +15,33 @@
 
 package service;
 
-import service.examples.*;
+import java.util.*;
 
-public class Main {
-    public static void main(String... args) {
-        SimpleHttpsServer server = new SimpleHttpsServer(43034);
+public interface SimpleHandler extends Comparable<SimpleHandler> {
+    List<String> STOP_SERVER = new ArrayList<>(); // handle() can return this to stop the server
 
-        server.addHandler(new DefaultHandler());
-        server.addHandler(new AapHandler());
-        server.addHandler(new PostHandler());
-        server.addHandler(new PostAapHandler());
+    default String getMethodPattern() {
+        return null;
+    }
 
-        server.start();
+    default String getPathPattern() {
+        return null;
+    }
+
+    List<String> handle(SimpleRequest r);
+
+    default boolean isMatch(SimpleRequest r) {
+        String methodPattern = getMethodPattern();
+        String pathPattern   = getPathPattern();
+        return (pathPattern == null || r.path.matches(pathPattern)) && (methodPattern == null || r.method.matches(methodPattern));
+    }
+
+    default int compareTo(SimpleHandler o) {
+        Comparator<String>        keyComparator = Comparator.nullsLast(Comparator.comparingInt(String::length));
+        Comparator<SimpleHandler> m             = Comparator.comparing(SimpleHandler::getMethodPattern, keyComparator);
+        Comparator<SimpleHandler> p             = Comparator.comparing(SimpleHandler::getPathPattern, keyComparator);
+        Comparator<SimpleHandler> x             = m.thenComparing(p);
+
+        return x.compare(this, o);
     }
 }

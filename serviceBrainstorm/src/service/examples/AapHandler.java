@@ -19,14 +19,14 @@ import java.util.*;
 
 import service.*;
 
-public class AapHandler implements ServiceHandler {
+public class AapHandler implements SimpleHandler {
     @Override
     public String getPathPattern() {
         return "/aap/.*";
     }
 
     @Override
-    public List<String> handle(Request r) {
+    public List<String> handle(SimpleRequest r) {
         return Arrays.asList("burp aap", "👋👋👋");
     }
 }

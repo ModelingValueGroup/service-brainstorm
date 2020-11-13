@@ -19,8 +19,8 @@ import java.util.*;
 
 import service.*;
 
-public class DefaultHandler implements ServiceHandler {
-    public List<String> handle(Request r) {
+public class DefaultHandler implements SimpleHandler {
+    public List<String> handle(SimpleRequest r) {
         return Arrays.asList("burp", "👋👋👋");
     }
 }

@@ -13,33 +13,21 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service;
+package service.examples;
 
-import java.util.*;
+import service.*;
 
-public interface ServiceHandler extends Comparable<ServiceHandler> {
-    default String getMethodPattern() {
-        return null;
-    }
+public class Main {
+    public static void main(String... args) {
+        SimpleDualServer server = new SimpleDualServer(11080, 11443);
 
-    default String getPathPattern() {
-        return null;
-    }
+        server.addHandler(new DefaultHandler());
+        server.addHandler(new AapHandler());
+        server.addHandler(new PostHandler());
+        server.addHandler(new PostAapHandler());
+        server.addHandler(new StopServerService());
 
-    List<String> handle(Request r);
-
-    default boolean isMatch(Request r) {
-        String methodPattern = getMethodPattern();
-        String pathPattern   = getPathPattern();
-        return (pathPattern == null || r.path.matches(pathPattern)) && (methodPattern == null || r.method.matches(methodPattern));
-    }
-
-    default int compareTo(ServiceHandler o) {
-        Comparator<String>         keyComparator = Comparator.nullsLast(Comparator.comparingInt(String::length));
-        Comparator<ServiceHandler> m             = Comparator.comparing(ServiceHandler::getMethodPattern, keyComparator);
-        Comparator<ServiceHandler> p             = Comparator.comparing(ServiceHandler::getPathPattern, keyComparator);
-        Comparator<ServiceHandler> x             = m.thenComparing(p);
-
-        return x.compare(this, o);
+        server.start();
+        server.waitForDone();
     }
 }
