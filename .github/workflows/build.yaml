@@ -120,13 +120,14 @@ jobs:
           cat <<EOF >runServer.sh
           #!/bin/bash
           echo "serviceBrainstorm server starting..."
+          java -version
           java -jar /serviceBrainstorm.jar
           echo "serviceBrainstorm server stopped..."
           EOF
           chmod +x runServer.sh
 
           cat <<EOF >Dockerfile
-          FROM ubuntu:latest
+          FROM openjdk:11.0.9.1-jdk # ubuntu:latest
 
           LABEL org.opencontainers.image.source="https://github.com/${{github.repository}}" \
                 org.opencontainers.image.title="service brainstorm image" \
@@ -137,10 +138,9 @@ jobs:
           COPY out/artifacts/serviceBrainstorm.jar /
 
           # install OpenJDK-11:
-          RUN apt-get update && \
-            apt-get install -y openjdk-11-jdk && \
-            apt-get install -y ant && \
-            apt-get clean;
+          #RUN apt-get update && \
+          #    apt-get install -y openjdk-11-jdk && \
+          #    apt-get clean
 
           # setup JAVA_HOME:
           ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
