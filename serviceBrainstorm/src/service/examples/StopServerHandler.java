@@ -19,14 +19,14 @@ import java.util.*;
 
 import service.*;
 
-public class PostHandler implements SimpleHandler {
+public class StopServerHandler implements SimpleHandler {
     @Override
     public String getMethodPattern() {
-        return "POST";
+        return "STOP";
     }
 
     @Override
     public List<String> handle(SimpleRequest r) {
-        return Arrays.asList("burp post", "👋👋👋");
+        return STOP_SERVER;
     }
 }

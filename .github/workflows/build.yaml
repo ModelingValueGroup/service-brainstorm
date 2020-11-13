@@ -162,3 +162,7 @@ jobs:
           docker login  "ghcr.io" -u ${{github.repository_owner}} --password-stdin <<<"${{secrets.ALLREP_TOKEN}}"
           docker push   "ghcr.io/$repoLC:$branch"
           docker logout "ghcr.io"
+
+#
+# deploy with:
+#   docker run -p 80:11080 -p 443:11443 ghcr.io/modelingvaluegroup/service-brainstorm:servicesetup

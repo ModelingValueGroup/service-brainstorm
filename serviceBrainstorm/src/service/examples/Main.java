@@ -22,10 +22,7 @@ public class Main {
         SimpleDualServer server = new SimpleDualServer(11080, 11443);
 
         server.addHandler(new DefaultHandler());
-        server.addHandler(new AapHandler());
-        server.addHandler(new PostHandler());
-        server.addHandler(new PostAapHandler());
-        server.addHandler(new StopServerService());
+        server.addHandler(new StopServerHandler());
 
         server.start();
         server.waitForDone();

@@ -21,6 +21,8 @@ import service.*;
 
 public class DefaultHandler implements SimpleHandler {
     public List<String> handle(SimpleRequest r) {
-        return Arrays.asList("burp", "👋👋👋");
+        System.out.println("... handling");
+        r.bodyLines.forEach(l -> System.out.println("  | " + l));
+        return Arrays.asList("{'error': 'hello world'}");
     }
 }
