@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
+      ALLREP_TOKEN: "${{secrets.ALLREP_TOKEN}}"
     steps:
       - name: "checkout"
         uses: actions/checkout@v1
@@ -47,7 +48,7 @@ jobs:
       - name: "download dependencies (as mentioned in pom)"
         run:  |
           . <(java -jar ~/buildtools.jar)
-          getAllDependencies "${{secrets.SCALEWAY_ACCESS_KEY}}" "${{secrets.SCALEWAY_SECRET_KEY}}"
+          getAllDependencies
           installJunitlauncher
 
       - name: "build"
