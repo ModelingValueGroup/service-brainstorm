@@ -127,7 +127,8 @@ jobs:
           chmod +x runServer.sh
 
           cat <<EOF >Dockerfile
-          FROM openjdk:11.0.9.1-jdk # ubuntu:latest
+          #FROM ubuntu:latest
+          FROM openjdk:11.0.9.1-jdk
 
           LABEL org.opencontainers.image.source="https://github.com/${{github.repository}}" \
                 org.opencontainers.image.title="service brainstorm image" \
