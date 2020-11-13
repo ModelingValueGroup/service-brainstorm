@@ -108,3 +108,39 @@ jobs:
         if  : github.ref == 'refs/heads/master'
         with:
           file : "out/artifacts/serviceBrainstorm.jar"
+
+      - ########################################################################################################
+        name: "prepare"
+        run: |
+          if [[ "${{secrets.ALLREP_TOKEN}}" == "" ]]; then
+           echo "::error::you did not set a login token for the GitHub Container Registry: secrets.ALLREP_TOKEN"
+           exit 1
+          fi
+
+          cat <<EOF >runServer.sh
+          #!/bin/bash
+          echo "serviceBrainstorm server starting..."
+          java -jar /serviceBrainstorm.jar
+          echo "serviceBrainstorm server stopped..."
+          EOF
+          chmod +x runServer.sh
+
+          cat <<EOF >Dockerfile
+          FROM ubuntu:latest
+          LABEL org.opencontainers.image.source="https://github.com/${{github.repository}}" \
+                org.opencontainers.image.title="service brainstorm image" \
+                org.opencontainers.image.description="service brainstorm image"
+          COPY runServer.sh /
+          COPY out/artifacts/serviceBrainstorm.jar /
+          ENTRYPOINT ["/runServer.sh"]
+          EOF
+
+      - ########################################################################################################
+        name: "build and publish image"
+        run: |
+          branch="$(sed 's|.*/||' <<<${{github.repository}})"
+          docker build --label org.opencontainers.image.revision=${{github.sha}} --iidfile serviceBrainstorm.id .
+          docker tag    "$(cat serviceBrainstorm.id)" "ghcr.io/${{github.repository}}:$branch"
+          docker login  "ghcr.io" -u ${{github.repository_owner}} --password-stdin <<<"${{secrets.ALLREP_TOKEN}}"
+          docker push   "ghcr.io/${{github.repository}}:$branch"
+          docker logout "ghcr.io"
