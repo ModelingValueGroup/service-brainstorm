@@ -25,7 +25,7 @@
 #===================================================================
 version=1.0.0
 artifacts=(
-  "org.modelingvalue   service-brainstorm      $version    jar jds"
+  "org.modelingvalue   service-brainstorm      $version    jar j-s"
 )
 dependencies=(
   "org.modelingvalue   dclare                  1.4.0       jar jds-"
