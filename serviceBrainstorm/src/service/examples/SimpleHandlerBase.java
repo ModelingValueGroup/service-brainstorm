@@ -78,9 +78,10 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
         return l;
     }
 
-    public List<String> readResource(String name) {
-        List<String> l = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(name))))) {
+    public static List<String> readResource(String name) {
+        List<String> l        = new ArrayList<>();
+        String       fullName = SimpleHandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(SimpleHandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 l.add(line);
