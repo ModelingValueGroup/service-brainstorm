@@ -37,6 +37,7 @@ public class Main {
         server.addHandler(new ApiSettingsHandler());
         server.addHandler(new ConnectTokenHandler());
         server.addHandler(new DecisionListHandler());
+        server.addHandler(new ExecuteHandler());
 
         server.start();
         server.waitForDone();
