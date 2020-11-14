@@ -15,6 +15,7 @@
 
 package service.examples;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -73,6 +74,19 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
             } else if (a != null) {
                 l.add(a.toString());
             }
+        }
+        return l;
+    }
+
+    public List<String> readResource(String name) {
+        List<String> l = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(name))))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                l.add(line);
+            }
+        } catch (IOException e) {
+            throw new Error("problem reading " + name, e);
         }
         return l;
     }

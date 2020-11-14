@@ -36,6 +36,7 @@ public class Main {
         server.addHandler(new StopServerHandler());
         server.addHandler(new ApiSettingsHandler());
         server.addHandler(new ConnectTokenHandler());
+        server.addHandler(new DecisionListHandler());
 
         server.start();
         server.waitForDone();
@@ -75,6 +76,14 @@ public class Main {
         }
     }
 
-    //  GET /api/ApiExecution/decisions/list
-    // POST /connect/token
+    public static class DecisionListHandler extends SimpleHandlerBase {
+        public DecisionListHandler() {
+            super("GET", "/api/ApiExecution/decisions/list");
+        }
+
+        @Override
+        public List<String> handle(SimpleRequest r) {
+            return readResource("decision-list.json");
+        }
+    }
 }
