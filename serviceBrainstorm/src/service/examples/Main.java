@@ -15,6 +15,8 @@
 
 package service.examples;
 
+import java.util.*;
+
 import service.*;
 
 public class Main {
@@ -23,8 +25,34 @@ public class Main {
 
         server.addHandler(new DefaultHandler());
         server.addHandler(new StopServerHandler());
+        server.addHandler(new ApiSettingsHandler());
 
         server.start();
         server.waitForDone();
+    }
+
+    public static class ApiSettingsHandler implements SimpleHandler {
+        @Override
+        public String getMethodPattern() {
+            return "GET";
+        }
+
+        @Override
+        public String getPathPattern() {
+            return "/api/Settings";
+        }
+
+        @Override
+        public List<String> handle(SimpleRequest r) {
+            Map<String, String> map = new HashMap<>();
+            map.put("APIVersion", "2.1.13.0");
+            map.put("ApiType", "Execution");
+            map.put("Authority", "https://login.avo.la");
+            map.put("Environment", "Test");
+            map.put("IdentityManager", "https://login.avo.la:444");
+            map.put("Organisation", "fabhlth");
+            map.put("TokenEndpoint", "https://login.avo.la/connect/token");
+            return smartConcat(map);
+        }
     }
 }

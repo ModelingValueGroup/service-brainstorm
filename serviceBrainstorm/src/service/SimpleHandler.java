@@ -16,6 +16,7 @@
 package service;
 
 import java.util.*;
+import java.util.stream.*;
 
 public interface SimpleHandler extends Comparable<SimpleHandler> {
     List<String> STOP_SERVER = new ArrayList<>(); // handle() can return this to stop the server
@@ -43,5 +44,27 @@ public interface SimpleHandler extends Comparable<SimpleHandler> {
         Comparator<SimpleHandler> x             = m.thenComparing(p);
 
         return x.compare(this, o);
+    }
+
+    default List<String> smartConcat(Object... args) {
+        List<String> l = new ArrayList<>();
+        for (Object a : args) {
+            if (a instanceof Map) {
+                Map<?, ?> map = (Map<?, ?>) a;
+                if (!map.isEmpty()) {
+                    l.add("{");
+                    map.keySet().stream().sorted().forEach(key -> l.add(String.format("    \"%s\":\"%s\",", key, map.get(key))));
+                    l.set(l.size() - 1, l.get(l.size() - 1).replaceAll(",$", "")); // remove last ','
+                    l.add("}");
+                }
+            } else if (a instanceof BaseStream) {
+                ((BaseStream<?, ?>) a).spliterator().forEachRemaining(e -> l.add(e.toString()));
+            } else if (a instanceof Iterable) {
+                ((Iterable<?>) a).spliterator().forEachRemaining(e -> l.add(e.toString()));
+            } else if (a != null) {
+                l.add(a.toString());
+            }
+        }
+        return l;
     }
 }
