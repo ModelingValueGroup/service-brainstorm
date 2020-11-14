@@ -21,6 +21,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 public class SimpleRequest {
+    public String              hostAddress;
     public String              method;
     public String              path;
     public String              protocol;
@@ -38,6 +39,7 @@ public class SimpleRequest {
 
     public SimpleRequest(Socket socket, Charset encoding) {
         try {
+            hostAddress = socket.getInetAddress().getHostAddress();
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), encoding.name()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), encoding.name()));
             readRequestLine();

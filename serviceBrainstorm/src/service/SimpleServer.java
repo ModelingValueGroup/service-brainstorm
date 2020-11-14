@@ -117,6 +117,7 @@ public abstract class SimpleServer {
     }
 
     private void log(SimpleRequest r, SimpleHandler handler) {
+        System.out.printf("    %-30s : %s\n", "host", r.hostAddress);
         System.out.printf("    %-30s : %s\n", "method", r.method);
         System.out.printf("    %-30s : %s\n", "path", r.path);
         System.out.printf("    %-30s : %s\n", "handler", handler == null ? "<none>" : handler.getClass().getSimpleName());
