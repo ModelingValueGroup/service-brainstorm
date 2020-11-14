@@ -135,8 +135,6 @@ public abstract class SimpleServer {
 
     private SimpleHandler determineHandler(SimpleRequest r) {
         List<SimpleHandler> matches = handlers.stream().filter(h -> h.isMatch(r)).sorted().collect(Collectors.toList());
-        System.out.println();
-        matches.forEach(h -> System.out.println("  - match: " + h.getClass().getSimpleName()));
         return matches.isEmpty() ? null : matches.get(0);
     }
 
