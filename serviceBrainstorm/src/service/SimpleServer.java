@@ -25,6 +25,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
+import service.examples.*;
+
 public abstract class SimpleServer {
     private static final Charset             ENCODING    = StandardCharsets.UTF_8;
     private static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
@@ -95,7 +97,7 @@ public abstract class SimpleServer {
 
             if (handler != null) {
                 List<String> lines = handler.handle(r);
-                if (lines == SimpleHandler.STOP_SERVER) {
+                if (lines == SimpleHandlerBase.STOP_SERVER) {
                     stop = true;
                     serverSocket.close();
                 }
@@ -118,7 +120,15 @@ public abstract class SimpleServer {
         System.out.printf("    %-30s : %s\n", "method", r.method);
         System.out.printf("    %-30s : %s\n", "path", r.path);
         System.out.printf("    %-30s : %s\n", "handler", handler == null ? "<none>" : handler.getClass().getSimpleName());
-        r.headers.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    %-30s : %s\n", "header." + e.getKey(), e.getValue()));
+        if (r.headers != null) {
+            r.headers.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    header.%-23s : %s\n", e.getKey(), e.getValue()));
+        }
+        if (r.formData != null) {
+            r.formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    form.%-25s : %s\n", e.getKey(), e.getValue()));
+        }
+        if (r.bodyLines != null) {
+            r.bodyLines.forEach(l -> System.out.println("    >> " + l));
+        }
     }
 
     private SimpleHandler determineHandler(SimpleRequest r) {

@@ -19,10 +19,16 @@ import java.util.*;
 
 import service.*;
 
-public class DefaultHandler implements SimpleHandler {
+public class DefaultHandler extends SimpleHandlerBase {
+    public DefaultHandler() {
+        super(null, null);
+    }
+
     public List<String> handle(SimpleRequest r) {
         System.out.println("... handling");
+
         r.bodyLines.forEach(l -> System.out.println("  | " + l));
-        return Arrays.asList("{'error': 'hello world'}");
+
+        return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
     }
 }

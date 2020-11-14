@@ -19,14 +19,13 @@ import java.util.*;
 
 import service.*;
 
-public class StopServerHandler implements SimpleHandler {
-    @Override
-    public String getMethodPattern() {
-        return "STOP";
+public class StopServerHandler extends SimpleHandlerBase {
+    public StopServerHandler() {
+        super("STOP", null);
     }
 
     @Override
     public List<String> handle(SimpleRequest r) {
-        return STOP_SERVER;
+        return SimpleHandlerBase.STOP_SERVER;
     }
 }

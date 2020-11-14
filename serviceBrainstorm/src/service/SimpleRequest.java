@@ -21,58 +21,120 @@ import java.nio.charset.*;
 import java.util.*;
 
 public class SimpleRequest {
-    public final String              method;
-    public final String              path;
-    public final String              protocol;
-    public final Map<String, String> headers;
-    public final List<String>        bodyLines;
-    public final BufferedWriter      writer;
+    public String              method;
+    public String              path;
+    public String              protocol;
+    //
+    public BufferedReader      reader;
+    public BufferedWriter      writer;
+    //
+    public boolean             hasExpect;
+    public int                 contentLength;
+    public String              contentType;
+    //
+    public Map<String, String> headers;
+    public Map<String, String> formData;
+    public List<String>        bodyLines;
 
     public SimpleRequest(Socket socket, Charset encoding) {
         try {
-            BufferedReader reader      = new BufferedReader(new InputStreamReader(socket.getInputStream(), encoding.name()));
-            String         requestLine = reader.readLine();
-            String[]       parts       = requestLine.split(" ", 3);
-            if (parts.length != 3) {
-                throw new Error("unexpected request line: '" + requestLine + "'");
-            }
-            method = parts[0];
-            path = parts[1];
-            protocol = parts[2];
-            headers = getHeaderMap(reader);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), encoding.name()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), encoding.name()));
-            if (headers.containsKey("Expect")) {
-                writer.write("HTTP/1.1 100 Continue\r\n\r\n");
-                writer.flush();
-            }
-            bodyLines = getBodyLines(reader);
+            readRequestLine();
+            readHeaders();
+            readBody();
         } catch (Exception e) {
             throw new Error("could not make request", e);
         }
     }
 
-    private static Map<String, String> getHeaderMap(BufferedReader reader) throws IOException {
-        Map<String, String> headers = new HashMap<>();
+    private void readRequestLine() throws IOException {
+        String   requestLine = reader.readLine();
+        String[] parts       = requestLine.split(" ", 3);
+        if (parts.length != 3) {
+            throw new Error("unexpected request line: '" + requestLine + "'");
+        }
+        method = parts[0];
+        path = parts[1];
+        protocol = parts[2];
+    }
+
+    private void readHeaders() throws IOException {
+        Map<String, String> map = new HashMap<>();
         for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
             String[] parts = line.split(": *", 2);
             if (parts.length != 2) {
                 throw new Error("unexpected header line: '" + line + "'");
             }
-            headers.put(parts[0], parts[1]);
+            map.put(parts[0], parts[1]);
         }
-        return Collections.unmodifiableMap(headers);
+        headers = Collections.unmodifiableMap(map);
+
+        hasExpect = headers.containsKey("Expect");
+        contentLength = headers.containsKey("Content-Length") ? Integer.parseInt(headers.get("Content-Length")) : -1;
+        contentType = headers.get("Content-Type");
     }
 
-    private List<String> getBodyLines(BufferedReader reader) throws IOException {
+    private void readBody() throws IOException {
+        if (1_000_000 < contentLength) {
+            throw new Error("body too long: " + contentLength);
+        }
+        if (hasExpect) {
+            writer.write("HTTP/1.1 100 Continue\r\n\r\n");
+            writer.flush();
+        }
+
+        if ("application/x-www-form-urlencoded".equals(contentType)) {
+            readFormData();
+        } else {
+            readBodyLines();
+        }
+    }
+
+    private void readBodyLines() throws IOException {
         List<String> lines            = new ArrayList<>();
-        String       transferEncoding = headers.get("Transfer-Encoding");
-        if (transferEncoding == null || "identity".equals(transferEncoding)) {
-            return lines;
+        String       transferEncoding = this.headers.get("Transfer-Encoding");
+        if (transferEncoding != null && !"identity".equals(transferEncoding)) {
+            for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
+                lines.add(line);
+            }
         }
-        for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
-            lines.add(line);
-        }
-        return Collections.unmodifiableList(lines);
+        bodyLines = Collections.unmodifiableList(lines);
     }
 
+    private void readFormData() {
+        if (contentLength < 0) {
+            throw new Error("form data requires Content-Length in header");
+        }
+        String              s   = new String(read(reader, contentLength));
+        String[]            kvs = s.split("&");
+        Map<String, String> map = new HashMap<>(kvs.length);
+        for (String kv : kvs) {
+            String[] k_v = kv.split("=", 2);
+            String   k   = URLDecoder.decode(k_v[0], Charset.defaultCharset());
+            String   v   = k_v.length == 2 ? URLDecoder.decode(k_v[1], Charset.defaultCharset()) : null;
+            map.put(k, v);
+        }
+        formData = Collections.unmodifiableMap(map);
+    }
+
+    private static char[] read(BufferedReader reader, int length) {
+        char[] buf = new char[length];
+        try {
+            int read = 0;
+            while (read < length) {
+                int r = reader.read(buf, read, length - read);
+                if (r == -1) {
+                    break;
+                }
+                read += r;
+            }
+            if (length != read) {
+                throw new Error("form data is not of the expected length (" + length + " expected but only " + read + " could be read");
+            }
+        } catch (IOException e) {
+            throw new Error("problem reading form data", e);
+        }
+        return buf;
+    }
 }
