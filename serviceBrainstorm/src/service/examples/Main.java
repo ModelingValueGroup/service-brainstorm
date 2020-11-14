@@ -20,6 +20,15 @@ import java.util.*;
 import service.*;
 
 public class Main {
+    public static final String OUR_URL                    = "http://fabhlth.api.execution.test.modelingvalue.nl";
+    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
+    public static final String AVOLA_IDENTITY_MANAGER_URL = "https://login.avo.la:444";
+    public static final String AVOLA_TOKEN_ENDPOINT_URL   = "https://login.avo.la/connect/token";
+    //
+    public static final String AUTHORITY_URL              = OUR_URL;
+    public static final String IDENTITY_MANAGER_URL       = OUR_URL + "/___/identity/manager";
+    public static final String TOKEN_ENDPOINT_URL         = OUR_URL + "/connect/token";
+
     public static void main(String... args) {
         SimpleDualServer server = new SimpleDualServer(11080, 11443);
 
@@ -47,12 +56,14 @@ public class Main {
             Map<String, String> map = new HashMap<>();
             map.put("APIVersion", "2.1.13.0");
             map.put("ApiType", "Execution");
-            map.put("Authority", "https://login.avo.la");
+            map.put("Authority", AUTHORITY_URL);
             map.put("Environment", "Test");
-            map.put("IdentityManager", "https://login.avo.la:444");
+            map.put("IdentityManager", IDENTITY_MANAGER_URL);
             map.put("Organisation", "fabhlth");
-            map.put("TokenEndpoint", "https://login.avo.la/connect/token");
+            map.put("TokenEndpoint", TOKEN_ENDPOINT_URL);
             return smartConcat(map);
         }
     }
+
+    //  GET /api/ApiExecution/decisions/list
 }
