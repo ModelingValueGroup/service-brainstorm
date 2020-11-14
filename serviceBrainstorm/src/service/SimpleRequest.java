@@ -33,6 +33,9 @@ public class SimpleRequest {
             BufferedReader reader      = new BufferedReader(new InputStreamReader(socket.getInputStream(), encoding.name()));
             String         requestLine = reader.readLine();
             String[]       parts       = requestLine.split(" ", 3);
+            if (parts.length != 3) {
+                throw new Error("unexpected request line: '" + requestLine + "'");
+            }
             method = parts[0];
             path = parts[1];
             protocol = parts[2];
@@ -52,6 +55,9 @@ public class SimpleRequest {
         Map<String, String> headers = new HashMap<>();
         for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
             String[] parts = line.split(": *", 2);
+            if (parts.length != 2) {
+                throw new Error("unexpected header line: '" + line + "'");
+            }
             headers.put(parts[0], parts[1]);
         }
         return Collections.unmodifiableMap(headers);
