@@ -122,9 +122,12 @@ public class SimpleRequest {
 
     private void readBodyLines() throws IOException {
         List<String> lines = new ArrayList<>();
+        System.out.println("@@reading started");
         for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
+            System.out.println("@@read:"+line);
             lines.add(line);
         }
+        System.out.println("@@reading done");
         bodyLines = Collections.unmodifiableList(lines);
     }
 

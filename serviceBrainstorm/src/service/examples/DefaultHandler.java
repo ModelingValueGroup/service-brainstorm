@@ -25,10 +25,6 @@ public class DefaultHandler extends SimpleHandlerBase {
     }
 
     public List<String> handle(SimpleRequest r) {
-        System.out.println("... handling");
-
-        r.bodyLines.forEach(l -> System.out.println("  | " + l));
-
         return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
     }
 }

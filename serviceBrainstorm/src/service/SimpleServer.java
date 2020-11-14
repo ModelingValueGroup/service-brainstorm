@@ -128,7 +128,8 @@ public abstract class SimpleServer {
             r.formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    form.%-25s : %s\n", e.getKey(), e.getValue()));
         }
         if (r.bodyLines != null) {
-            r.bodyLines.forEach(l -> System.out.println("    >> " + l));
+            System.out.printf("    %-30s : %s\n", "body", r.bodyLines.size()+" lines");
+            r.bodyLines.forEach(l -> System.out.println("           | " + l));
         }
     }
 
