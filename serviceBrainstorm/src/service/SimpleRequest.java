@@ -115,19 +115,19 @@ public class SimpleRequest {
         if (contentLength < 0) {
             throw new Error("json requires Content-Length in header");
         }
-        String       all   = new String(read(reader, contentLength));
-        List<String> lines = Arrays.asList(all.split("[\n\r][\n\r]*"));
-        bodyLines = Collections.unmodifiableList(lines);
+        bodyLines = Collections.unmodifiableList(Collections.singletonList(new String(read(reader, contentLength))));
     }
 
     private void readBodyLines() throws IOException {
         List<String> lines = new ArrayList<>();
-        System.out.println("@@reading started");
-        for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
-            System.out.println("@@read:"+line);
-            lines.add(line);
+        if (0 < contentLength) {
+            String all = new String(read(reader, contentLength));
+            lines.addAll(Arrays.asList(all.split("[\n\r][\n\r]*")));
+        } else if (reader.ready()) {
+            for (String line = reader.readLine(); line != null && reader.ready(); line = reader.readLine()) {
+                lines.add(line);
+            }
         }
-        System.out.println("@@reading done");
         bodyLines = Collections.unmodifiableList(lines);
     }
 
