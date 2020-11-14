@@ -86,4 +86,15 @@ public class Main {
             return readResource("decision-list.json");
         }
     }
+
+    public static class ExecuteHandler extends SimpleHandlerBase {
+        public ExecuteHandler() {
+            super("POST", "/api/ApiExecution/execute");
+        }
+
+        @Override
+        public List<String> handle(SimpleRequest r) {
+            return readResource("execute.json");
+        }
+    }
 }

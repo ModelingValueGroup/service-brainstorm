@@ -88,20 +88,11 @@ public class SimpleRequest {
 
         if ("application/x-www-form-urlencoded".equals(contentType)) {
             readFormData();
+        } else if ("application/json".equals(contentType)) {
+            readJson();
         } else {
             readBodyLines();
         }
-    }
-
-    private void readBodyLines() throws IOException {
-        List<String> lines            = new ArrayList<>();
-        String       transferEncoding = this.headers.get("Transfer-Encoding");
-        if (transferEncoding != null && !"identity".equals(transferEncoding)) {
-            for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
-                lines.add(line);
-            }
-        }
-        bodyLines = Collections.unmodifiableList(lines);
     }
 
     private void readFormData() {
@@ -118,6 +109,23 @@ public class SimpleRequest {
             map.put(k, v);
         }
         formData = Collections.unmodifiableMap(map);
+    }
+
+    private void readJson() {
+        if (contentLength < 0) {
+            throw new Error("json requires Content-Length in header");
+        }
+        String       all   = new String(read(reader, contentLength));
+        List<String> lines = Arrays.asList(all.split("[\n\r][\n\r]*"));
+        bodyLines = Collections.unmodifiableList(lines);
+    }
+
+    private void readBodyLines() throws IOException {
+        List<String> lines = new ArrayList<>();
+        for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
+            lines.add(line);
+        }
+        bodyLines = Collections.unmodifiableList(lines);
     }
 
     private static char[] read(BufferedReader reader, int length) {
