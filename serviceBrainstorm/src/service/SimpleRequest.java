@@ -20,6 +20,8 @@ import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
 
+import javax.net.ssl.*;
+
 public class SimpleRequest {
     public String              hostAddress;
     public String              method;
@@ -45,14 +47,27 @@ public class SimpleRequest {
             readRequestLine();
             readHeaders();
             readBody();
+        } catch (SSLException e) {
+            if (e.getMessage().equals("Unsupported or unrecognized SSL message")) {
+                throw new IgnoreableError("could not determine request: " + e.getMessage());
+            }
+            throw new Error("could not determine request", e);
+        } catch (SocketException e) {
+            if (e.getMessage().equals("Connection reset")) {
+                throw new IgnoreableError("could not determine request: " + e.getMessage());
+            }
+            throw new Error("could not determine request", e);
         } catch (Exception e) {
             throw new Error("could not make request", e);
         }
     }
 
     private void readRequestLine() throws IOException {
-        String   requestLine = reader.readLine();
-        String[] parts       = requestLine.split(" ", 3);
+        String requestLine = reader.readLine();
+        if (requestLine == null) {
+            throw new IgnoreableError("could not read request line");
+        }
+        String[] parts = requestLine.split(" ", 3);
         if (parts.length != 3) {
             throw new Error("unexpected request line: '" + requestLine + "'");
         }
