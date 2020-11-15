@@ -110,6 +110,8 @@ public abstract class SimpleServer {
                 r.writer.flush();
             }
             System.out.println("<<< " + getProtocol() + " request handled.");
+        } catch (IgnoreableError e) {
+            System.err.println("ignoreable problem while handling request: " + e.getMessage());
         } catch (Throwable e) {
             System.err.println("Problem handling " + getProtocol() + " request");
             e.printStackTrace();
