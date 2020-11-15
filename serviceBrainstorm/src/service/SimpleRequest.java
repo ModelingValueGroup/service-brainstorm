@@ -48,7 +48,7 @@ public class SimpleRequest {
             readHeaders();
             readBody();
         } catch (SSLException e) {
-            if (e.getMessage().equals("Unsupported or unrecognized SSL message")) {
+            if (e.getMessage().equals("Unsupported or unrecognized SSL message") || e.getMessage().equals("Connection reset")) {
                 throw new IgnoreableError("could not determine request: " + e.getMessage());
             }
             throw new Error("could not determine request", e);
