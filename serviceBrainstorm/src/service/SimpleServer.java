@@ -88,8 +88,8 @@ public abstract class SimpleServer {
     }
 
     private void handle(Socket socket) {
+        System.out.println(">>> handling " + getProtocol() + " request....");
         try (socket) {
-            System.out.println(">>> handling " + getProtocol() + " request....");
             SimpleRequest r       = new SimpleRequest(socket, ENCODING);
             SimpleHandler handler = determineHandler(r);
 
@@ -109,12 +109,13 @@ public abstract class SimpleServer {
                 ), lines.stream()).forEach(l -> writeLine(r.writer, l));
                 r.writer.flush();
             }
-            System.out.println("<<< " + getProtocol() + " request handled.");
         } catch (IgnoreableError e) {
             System.err.println("ignoreable problem while handling request: " + e.getMessage());
         } catch (Throwable e) {
-            System.err.println("Problem handling " + getProtocol() + " request");
+            System.err.println("problem handling " + getProtocol() + " request");
             e.printStackTrace();
+        } finally {
+            System.out.println("<<< " + getProtocol() + " request handled.");
         }
     }
 
