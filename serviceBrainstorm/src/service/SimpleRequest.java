@@ -48,15 +48,15 @@ public class SimpleRequest {
             readHeaders();
             readBody();
         } catch (SSLException e) {
-            if (e.getMessage().equals("Unsupported or unrecognized SSL message") || e.getMessage().equals("Connection reset")) {
+            if (e.getMessage().matches("(Unsupported or unrecognized SSL message|The size of the handshake message.*|Connection reset|no cipher suites in common)")) {
                 throw new IgnoreableError("could not determine request: " + e.getMessage());
             }
-            throw new Error("could not determine request", e);
+            throw new Error("could not make request", e);
         } catch (SocketException e) {
             if (e.getMessage().equals("Connection reset")) {
                 throw new IgnoreableError("could not determine request: " + e.getMessage());
             }
-            throw new Error("could not determine request", e);
+            throw new Error("could not make request", e);
         } catch (Exception e) {
             throw new Error("could not make request", e);
         }
@@ -81,7 +81,7 @@ public class SimpleRequest {
         for (String line = reader.readLine(); !(line == null || line.isEmpty()); line = reader.readLine()) {
             String[] parts = line.split(": *", 2);
             if (parts.length != 2) {
-                throw new Error("unexpected header line: '" + line + "'");
+                throw new IgnoreableError("unexpected header line: '" + line + "'");
             }
             map.put(parts[0], parts[1]);
         }
