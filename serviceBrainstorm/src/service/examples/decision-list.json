@@ -7,7 +7,7 @@
         "Name": "SEH Triage actie - Version TOMTOMTOM",
         "DecisionServiceId": 62,
         "DecisionName": null,
-        "DecisionServiceVersionId": 258,
+        "DecisionServiceVersionId": 9091,
         "VersionNumber": 9999,
         "InputData": [
           {
@@ -81,9 +81,9 @@
     "Versions": [
       {
         "Name": "IC Triage opnemen op IC - Version TOMTOMTOM",
-        "DecisionServiceId": 62,
+        "DecisionServiceId": 64,
         "DecisionName": null,
-        "DecisionServiceVersionId": 258,
+        "DecisionServiceVersionId": 9090,
         "VersionNumber": 9999,
         "InputData": [
           {
