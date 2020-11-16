@@ -69,7 +69,7 @@ public class SimpleRequest {
         }
         String[] parts = requestLine.split(" ", 3);
         if (parts.length != 3) {
-            throw new Error("unexpected request line: '" + requestLine + "'");
+            throw new IgnoreableError("unexpected request line: '" + requestLine + "'");
         }
         method = parts[0];
         path = parts[1];
