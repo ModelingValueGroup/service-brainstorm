@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
+      ALLREP_TOKEN: "${{secrets.ALLREP_TOKEN}}"
     steps:
       - name: "checkout"
         uses: actions/checkout@v1
@@ -47,7 +48,7 @@ jobs:
       - name: "download dependencies (as mentioned in pom)"
         run:  |
           . <(java -jar ~/buildtools.jar)
-          getAllDependencies "${{secrets.SCALEWAY_ACCESS_KEY}}" "${{secrets.SCALEWAY_SECRET_KEY}}"
+          getAllDependencies
           installJunitlauncher
 
       - name: "build"
@@ -69,26 +70,26 @@ jobs:
       - name: "publish action-artifact jar"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld.jar
-          path: out/artifacts/helloworld.jar
+          name: serviceBrainstorm.jar
+          path: out/artifacts/serviceBrainstorm.jar
 
       - name: "publish action-artifact sources"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-sources.jar
-          path: out/artifacts/helloworld-sources.jar
+          name: serviceBrainstorm-sources.jar
+          path: out/artifacts/serviceBrainstorm-sources.jar
 
       - name: "publish action-artifact javadoc"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-javadoc.jar
-          path: out/artifacts/helloworld-javadoc.jar
+          name: serviceBrainstorm-javadoc.jar
+          path: out/artifacts/serviceBrainstorm-javadoc.jar
 
       - name: "publish action-artifact test-results"
         uses: actions/upload-artifact@v1
         with:
-          name: helloworld-testresults.jar
-          path: out/artifacts/helloworld-testresults.jar
+          name: serviceBrainstorm-testresults.jar
+          path: out/artifacts/serviceBrainstorm-testresults.jar
 
       - name: "if NOT master: saving snapshots for other projects on this branch"
         if: github.ref != 'refs/heads/master'
@@ -106,4 +107,44 @@ jobs:
         uses: ModelingValueGroup/upload-maven-package-action@master
         if  : github.ref == 'refs/heads/master'
         with:
-          file : "out/artifacts/helloworld.jar"
+          file : "out/artifacts/serviceBrainstorm.jar"
+
+      - ########################################################################################################
+        name: "prepare"
+        run: |
+          if [[ "${{secrets.ALLREP_TOKEN}}" == "" ]]; then
+           echo "::error::you did not set a login token for the GitHub Container Registry: secrets.ALLREP_TOKEN"
+           exit 1
+          fi
+
+          cat <<EOF >runServer.sh
+          #!/bin/bash
+          ( echo "$(date) serviceBrainstorm server starting..."
+            java -jar /serviceBrainstorm.jar
+            echo "$(date) serviceBrainstorm server stopped..."
+          ) | tee -a /tmp/serviceBrainstorm.log
+          EOF
+          chmod +x runServer.sh
+
+          cat <<EOF >Dockerfile
+          FROM openjdk:11.0.9.1-jdk
+          COPY runServer.sh /
+          COPY out/artifacts/serviceBrainstorm.jar /
+          ENTRYPOINT ["/runServer.sh"]
+          EOF
+
+      - ########################################################################################################
+        name: "build and publish image"
+        run: |
+          branch="$(sed 's|[^a-z]||g' <<<${GITHUB_REF#refs/heads/})"
+          repoLC="$(tr '[A-Z]' '[a-z]' <<<${{github.repository}})"
+
+          docker build --label org.opencontainers.image.revision=${{github.sha}} --iidfile serviceBrainstorm.id .
+          docker tag    "$(cat serviceBrainstorm.id)" "ghcr.io/$repoLC:$branch"
+          docker login  "ghcr.io" -u ${{github.repository_owner}} --password-stdin <<<"${{secrets.ALLREP_TOKEN}}"
+          docker push   "ghcr.io/$repoLC:$branch"
+          docker logout "ghcr.io"
+
+#
+# deploy with:
+#   docker run -it -p 80:11080 -p 443:11443 ghcr.io/modelingvaluegroup/service-brainstorm:servicesetup

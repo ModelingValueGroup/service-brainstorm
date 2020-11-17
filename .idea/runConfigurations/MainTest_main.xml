@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="MainTest.main" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-    <module name="helloworld" />
+    <module name="serviceBrainstorm" />
     <useClassPathOnly />
     <extension name="coverage">
       <pattern>
