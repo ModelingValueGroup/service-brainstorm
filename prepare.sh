@@ -21,7 +21,8 @@ set -ue
 # the lib folder will be filled from the project.sh file
 ##########################################################################
 
-. ~/secrets.sh # for $INPUT_TOKEN
+. ~/secrets.sh # for $GITHUB_TOKEN
+export ALLREP_TOKEN="$GITHUB_TOKEN"
 
 echo "## downloading buildtools..."
 curl \
@@ -47,7 +48,7 @@ echo "## get dependencies from maven..."
     mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=javadoc || :
     mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=sources || :
 ) > /tmp/prepare.log
-(   getAllDependencies "$INPUT_TOKEN" 2>&1 \
+(   getAllDependencies "$GITHUB_TOKEN" 2>&1 \
         | fgrep -v 'could not download artifact: org.modelingvalue:' \
         | fgrep -v 'missing dependency org.modelingvalue:'
 ) || :
