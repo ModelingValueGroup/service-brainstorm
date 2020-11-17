@@ -2,6 +2,6 @@ package base;
 
 import org.modelingvalue.dclare.Mutable;
 
-public abstract class DObject implements Mutable {
+public abstract class CDMObject implements Mutable {
 
 }

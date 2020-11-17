@@ -17,15 +17,15 @@ package template;
 
 import org.modelingvalue.collections.Set;
 
-import base.DClass;
-import base.DObject;
+import base.CDMClass;
+import base.CDMObject;
 
-public class Leg extends DObject {
+public class Leg extends CDMObject {
 
-    private static final DClass<Leg> D_CLASS = DClass.of(Leg.class, Set.of());
+    private static final CDMClass<Leg> D_CLASS = CDMClass.of(Leg.class, Set.of());
 
     @Override
-    public DClass<Leg> dClass() {
+    public CDMClass<Leg> dClass() {
         return D_CLASS;
     }
 

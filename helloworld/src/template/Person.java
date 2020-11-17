@@ -18,15 +18,15 @@ package template;
 import org.modelingvalue.collections.List;
 import org.modelingvalue.collections.Set;
 
-import base.DClass;
-import base.DObject;
-import base.DProperty;
+import base.CDMClass;
+import base.CDMObject;
+import base.CDMProperty;
 
-public class Person extends DObject {
+public class Person extends CDMObject {
 
-    private static final DProperty<Person, List<Leg>> LEGS    = DProperty.of("LEGS", List.of(), true);
+    private static final CDMProperty<Person, List<Leg>> LEGS    = CDMProperty.of("LEGS", List.of(), true);
 
-    private static final DClass<Person>               D_CLASS = DClass.of(Person.class, Set.of(LEGS));
+    private static final CDMClass<Person>               D_CLASS = CDMClass.of(Person.class, Set.of(LEGS));
 
     public List<Leg> getLegs() {
         return LEGS.get(this);
@@ -37,7 +37,7 @@ public class Person extends DObject {
     }
 
     @Override
-    public DClass<Person> dClass() {
+    public CDMClass<Person> dClass() {
         return D_CLASS;
     }
 
