@@ -16,14 +16,23 @@
 package template;
 
 import org.junit.jupiter.api.Test;
+import org.modelingvalue.dclare.State;
+import org.modelingvalue.dclare.UniverseTransaction;
 
 class CaseTest {
 
     @Test
     void test1() {
-
         Case geval = new Case();
+        UniverseTransaction tx = geval.transaction();
+        tx.put("start", () -> {
 
+        });
+        tx.stop();
+        State result = tx.waitForEnd();
+        result.get(() -> {
+            return null;
+        });
     }
 
 }

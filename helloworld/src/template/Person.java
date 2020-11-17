@@ -16,7 +16,6 @@
 package template;
 
 import org.modelingvalue.collections.List;
-import org.modelingvalue.collections.Set;
 
 import base.CDMClass;
 import base.CDMObject;
@@ -26,7 +25,7 @@ public class Person extends CDMObject {
 
     private static final CDMProperty<Person, List<Leg>> LEGS    = CDMProperty.of("LEGS", List.of(), true);
 
-    private static final CDMClass<Person>               D_CLASS = CDMClass.of(Person.class, Set.of(LEGS));
+    private static final CDMClass<Person>               D_CLASS = CDMClass.of(Person.class, LEGS);
 
     public List<Leg> getLegs() {
         return LEGS.get(this);

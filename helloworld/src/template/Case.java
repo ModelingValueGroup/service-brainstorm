@@ -15,8 +15,6 @@
 
 package template;
 
-import org.modelingvalue.collections.Set;
-
 import base.CDMClass;
 import base.CDMProperty;
 import base.CDMUniverse;
@@ -27,7 +25,7 @@ public class Case extends CDMUniverse {
 
     private static final CDMProperty<Case, Plan>   PLAN    = CDMProperty.of("PLAN", true, c -> new Plan());
 
-    private static final CDMClass<Case>            D_CLASS = CDMClass.of(Case.class, Set.of(PERSON, PLAN));
+    private static final CDMClass<Case>            D_CLASS = CDMClass.of(Case.class, PERSON, PLAN);
 
     @Override
     public CDMClass<Case> dClass() {

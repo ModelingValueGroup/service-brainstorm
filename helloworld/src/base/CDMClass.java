@@ -1,5 +1,6 @@
 package base;
 
+import org.modelingvalue.collections.Collection;
 import org.modelingvalue.collections.Set;
 import org.modelingvalue.dclare.MutableClass;
 import org.modelingvalue.dclare.Observer;
@@ -8,12 +9,13 @@ import org.modelingvalue.dclare.Setable;
 public class CDMClass<C extends CDMObject> implements MutableClass {
 
     private final Class<C>                     cls;
-    private final Set<CDMProperty<C, ?>>         properties;
+    private final Set<CDMProperty<C, ?>>       properties;
     private final Set<? extends Setable<C, ?>> setables;
     private final Set<? extends Observer<C>>   observers;
 
-    public static <T extends CDMObject> CDMClass<T> of(Class<T> cls, Set<CDMProperty<T, ?>> properties) {
-        return new CDMClass<T>(cls, properties);
+    @SafeVarargs
+    public static <T extends CDMObject> CDMClass<T> of(Class<T> cls, CDMProperty<T, ?>... properties) {
+        return new CDMClass<T>(cls, Collection.of(properties).toSet());
     }
 
     private CDMClass(Class<C> cls, Set<CDMProperty<C, ?>> properties) {

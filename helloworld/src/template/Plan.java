@@ -16,7 +16,6 @@
 package template;
 
 import org.modelingvalue.collections.List;
-import org.modelingvalue.collections.Set;
 
 import base.CDMClass;
 import base.CDMObject;
@@ -26,7 +25,7 @@ public class Plan extends CDMObject {
 
     private static final CDMProperty<Plan, List<Action>> ACTIONS = CDMProperty.of("ACTIONS", List.of(), true);
 
-    private static final CDMClass<Plan>                  D_CLASS = CDMClass.of(Plan.class, Set.of(ACTIONS));
+    private static final CDMClass<Plan>                  D_CLASS = CDMClass.of(Plan.class, ACTIONS);
 
     public List<Action> getActions() {
         return ACTIONS.get(this);
