@@ -27,6 +27,10 @@ public class Plan extends CDMObject {
 
     private static final CDMClass<Plan>                     D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
 
+    public Plan(Object id) {
+        super(id);
+    }
+
     public List<Treatment> getTreatments() {
         return TREATMENTS.get(this);
     }

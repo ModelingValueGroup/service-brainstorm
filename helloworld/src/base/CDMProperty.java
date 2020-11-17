@@ -77,7 +77,7 @@ public class CDMProperty<O extends CDMObject, T> {
         Supplier<Setable<?, ?>> os = opposite != null ? () -> opposite.get().setable : null;
         if (STATEFULL.get()) {
             this.setable = Observed.of(id, false, def, containment, os, null, true);
-            this.observer = Observer.of(id, o -> set(o, deriver.apply(o)));
+            this.observer = deriver != null ? Observer.of(id, o -> set(o, deriver.apply(o))) : null;
         } else {
             this.setable = Constant.of(id, def, containment, os, null, deriver, true);
             this.observer = null;
@@ -106,6 +106,31 @@ public class CDMProperty<O extends CDMObject, T> {
 
     public Observer<O> observer() {
         return observer;
+    }
+
+    @Override
+    public String toString() {
+        return setable.id().toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return setable.hashCode();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CDMProperty other = (CDMProperty) obj;
+        if (!setable.equals(other.setable))
+            return false;
+        return true;
     }
 
 }

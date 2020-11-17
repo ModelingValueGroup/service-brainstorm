@@ -16,31 +16,57 @@
 package template;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.modelingvalue.collections.List;
 import org.modelingvalue.dclare.State;
-import org.modelingvalue.dclare.UniverseTransaction;
 
-class CaseTest {
+import base.CDMProperty;
+import base.CDMTransaction;
+
+class CaseTestStateless {
 
     @Test
     void test1() {
-        Case universe = new Case();
-        UniverseTransaction tx = universe.transaction();
-        tx.put("start", () -> {
-            Person person = new Person();
-            universe.setPerson(person);
-            Leg left = new Leg();
-            Leg rigth = new Leg();
-            person.setLegs(List.of(left, rigth));
-            Condition condition = new Condition();
-            left.setCondition(condition);
+        CDMProperty.STATEFULL.run(false, () -> {
+            Case universe = new Case("test");
+            Person person = new Person("Wim");
+            Leg left = new Leg("left");
+            Leg rigth = new Leg("rigth");
+            Condition condition = new Condition("problem");
+            CDMTransaction tx = universe.transaction(() -> {
+                universe.setPerson(person);
+                person.setLegs(List.of(left, rigth));
+                left.setCondition(condition);
+                rigth.setCondition(null);
+            });
+            tx.stop();
+            State result = tx.waitForEnd();
+            result.run(() -> {
+                assertNotNull(universe.getPlan());
+            });
         });
-        tx.stop();
-        State result = tx.waitForEnd();
-        result.run(() -> {
-            assertNotNull(universe.getPlan());
+    }
+
+    @Test
+    void test2() {
+        CDMProperty.STATEFULL.run(false, () -> {
+            Case universe = new Case("test");
+            Person person = new Person("Wim");
+            Leg left = new Leg("left");
+            Leg rigth = new Leg("rigth");
+            CDMTransaction tx = universe.transaction(() -> {
+                universe.setPerson(person);
+                person.setLegs(List.of(left, rigth));
+                left.setCondition(null);
+                rigth.setCondition(null);
+            });
+            tx.stop();
+            State result = tx.waitForEnd();
+            result.run(() -> {
+                assertNull(universe.getPlan());
+            });
         });
     }
 

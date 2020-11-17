@@ -19,4 +19,34 @@ import org.modelingvalue.dclare.Mutable;
 
 public abstract class CDMObject implements Mutable {
 
+    private final Object id;
+
+    public CDMObject(Object id) {
+        this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CDMObject other = (CDMObject) obj;
+        if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":" + id.toString();
+    }
+
 }

@@ -25,6 +25,10 @@ public class Leg extends CDMObject {
 
     private static final CDMClass<Leg>               D_CLASS   = CDMClass.of(Leg.class);
 
+    public Leg(Object id) {
+        super(id);
+    }
+
     @Override
     public CDMClass<Leg> dClass() {
         return D_CLASS;
