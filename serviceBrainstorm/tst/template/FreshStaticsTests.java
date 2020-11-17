@@ -20,7 +20,21 @@ public class FreshStaticsTests {
     }
 
     public void test2() {
+        Assertions.assertEquals(0, n); // with classloader the value of previous test is back to default
+        n = 420;
+        Assertions.assertEquals(420, n);
+    }
+
+    @Test
+    public void test3() {
         Assertions.assertEquals(0, n);
+        n = 4711;
+        Assertions.assertEquals(4711, n);
+    }
+
+    @Test
+    public void test4() {
+        Assertions.assertEquals(4711, n); // without classloader the value of previous test is left in static
         n = 420;
         Assertions.assertEquals(420, n);
     }

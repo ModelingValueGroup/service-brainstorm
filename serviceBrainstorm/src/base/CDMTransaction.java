@@ -15,11 +15,9 @@
 
 package base;
 
-import org.modelingvalue.collections.util.ContextThread;
-import org.modelingvalue.collections.util.ContextThread.ContextPool;
-import org.modelingvalue.dclare.LeafTransaction;
-import org.modelingvalue.dclare.State;
-import org.modelingvalue.dclare.UniverseTransaction;
+import org.modelingvalue.collections.util.*;
+import org.modelingvalue.collections.util.ContextThread.*;
+import org.modelingvalue.dclare.*;
 
 public class CDMTransaction extends UniverseTransaction {
 
@@ -45,9 +43,9 @@ public class CDMTransaction extends UniverseTransaction {
         return (CDMUniverse) LeafTransaction.getCurrent().universeTransaction().universe();
     }
 
-    @Override
-    protected void mainLoop(State start) {
-        CDMProperty.STATEFULL.run(STATEFULL, () -> super.mainLoop(start));
-    }
+//    @Override
+//    protected void mainLoop(State start) {
+//        CDMProperty.STATEFULL.run(STATEFULL, () -> super.mainLoop(start));
+//    }
 
 }
