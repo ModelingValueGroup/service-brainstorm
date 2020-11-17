@@ -29,7 +29,7 @@ import base.CDMTransaction;
 class CaseTestStatefull {
 
     @Test
-    void test3() {
+    void test1() {
         CDMProperty.STATEFULL.run(true, () -> {
             Case universe = new Case("test");
             CDMTransaction tx = universe.transaction(() -> {
@@ -46,14 +46,14 @@ class CaseTestStatefull {
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertEquals(universe.getPlan().getTreatments().size(), 2);
                 assertNotNull(universe.getPlan());
+                assertEquals(universe.getPlan().getTreatments().size(), 2);
             });
         });
     }
 
     @Test
-    void test4() {
+    void test2() {
         CDMProperty.STATEFULL.run(true, () -> {
             Case universe = new Case("test");
             CDMTransaction tx = universe.transaction(() -> {

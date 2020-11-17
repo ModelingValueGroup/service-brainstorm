@@ -46,8 +46,8 @@ class CaseTestStateless {
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertEquals(universe.getPlan().getTreatments().size(), 2);
                 assertNotNull(universe.getPlan());
+                assertEquals(universe.getPlan().getTreatments().size(), 2);
             });
         });
     }

@@ -28,7 +28,7 @@ public class CDMTransaction extends UniverseTransaction {
 
     private final Runnable          init;
 
-    public CDMTransaction(CDMUniverse id, Runnable init, boolean statefull) {
+    public CDMTransaction(CDMUniverse id, Runnable init) {
         super(id, THE_POOL, null, MAX_IN_IN_QUEUE, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
         this.init = init;
     }
