@@ -150,7 +150,7 @@ public abstract class SimpleServer {
     }
 
     protected static int getDefaultPort(String protocol) {
-        String url = protocol + "//a.b";
+        String url = protocol + "://a.b";
         try {
             return new URL(url).getDefaultPort();
         } catch (MalformedURLException e) {
