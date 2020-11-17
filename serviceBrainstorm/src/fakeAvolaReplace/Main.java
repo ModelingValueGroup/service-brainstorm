@@ -32,16 +32,27 @@ public class Main {
     public static void main(String... args) {
         SimpleDualServer server = new SimpleDualServer();
 
-        server.addHandler(new ApiSettingsHandler().with("GET", "/api/Settings"));
-        server.addHandler(new ConnectTokenHandler().with("POST", "/connect/token"));
-        server.addHandler(new DecisionListHandler().with("GET", "/api/ApiExecution/decisions/list"));
-        server.addHandler(new ExecuteHandler().with("POST", "/api/ApiExecution/execute"));
+        server.addHandler(new ConnectTokenHandler()/**/.with("POST"/**/, "/connect/token"));
+        server.addHandler(new ApiSettingsHandler()/* */.with("GET"/* */, "/api/Settings"));
+        server.addHandler(new DecisionListHandler()/**/.with("GET"/* */, "/api/ApiExecution/decisions/list"));
+        server.addHandler(new ExecuteHandler()/*     */.with("POST"/**/, "/api/ApiExecution/execute"));
 
         server.addHandler(new DefaultHandler());
         server.addHandler(new StopServerHandler());
 
         server.start();
         server.waitForDone();
+    }
+
+    public static class ConnectTokenHandler extends HandlerBase {
+        @Override
+        public List<String> handle(SimpleRequest r) {
+            Map<String, String> map = new HashMap<>();
+            map.put("access_token", "__bogus__access__token__");
+            map.put("expires_in", "3600");
+            map.put("token_type", "Bearer");
+            return smartConcat(map);
+        }
     }
 
     public static class ApiSettingsHandler extends HandlerBase {
@@ -57,17 +68,7 @@ public class Main {
             map.put("TokenEndpoint", TOKEN_ENDPOINT_URL);
             return smartConcat(map);
         }
-    }
 
-    public static class ConnectTokenHandler extends HandlerBase {
-        @Override
-        public List<String> handle(SimpleRequest r) {
-            Map<String, String> map = new HashMap<>();
-            map.put("access_token", "__bogus__access__token__");
-            map.put("expires_in", "3600");
-            map.put("token_type", "Bearer");
-            return smartConcat(map);
-        }
     }
 
     public static class DecisionListHandler extends HandlerBase {
