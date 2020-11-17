@@ -13,7 +13,7 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service;
+package simpleservice;
 
 import java.io.*;
 import java.net.*;
@@ -22,14 +22,16 @@ import java.security.*;
 
 import javax.net.ssl.*;
 
+import simpleservice.util.*;
+
 public class SimpleHttpsServer extends SimpleServer {
-    public SimpleHttpsServer(int port) {
-        super(port);
+    public SimpleHttpsServer() {
+        super("https");
     }
 
-    @Override
-    protected String getProtocol() {
-        return "https";
+    @SuppressWarnings("unused")
+    public SimpleHttpsServer(int port) {
+        super("https", port);
     }
 
     protected ServerSocket makeServerSocket(InetSocketAddress address) throws IOException, GeneralSecurityException {
@@ -46,13 +48,14 @@ public class SimpleHttpsServer extends SimpleServer {
         String keyStorePassword = "xxxxxx";
         Path   keyStorePath     = Files.createTempFile("keystore", ".jks");
         Files.delete(keyStorePath);
-        CLI.execute("keytool" +
-                " -genkeypair" +
-                " -keyalg       RSA" +
-                " -alias        selfsigned" +
-                " -keystore     " + keyStorePath +
-                " -storepass    " + keyStorePassword +
-                " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
+        CLI.execute(
+                "keytool" +
+                        " -genkeypair" +
+                        " -keyalg       RSA" +
+                        " -alias        selfsigned" +
+                        " -keystore     " + keyStorePath +
+                        " -storepass    " + keyStorePassword +
+                        " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(Files.newInputStream(keyStorePath), keyStorePassword.toCharArray());

@@ -13,7 +13,7 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service;
+package simpleservice;
 
 import java.io.*;
 import java.net.*;
@@ -21,6 +21,8 @@ import java.nio.charset.*;
 import java.util.*;
 
 import javax.net.ssl.*;
+
+import simpleservice.util.*;
 
 public class SimpleRequest {
     public String              hostAddress;

@@ -1,0 +1,7 @@
+version: '2'
+services:
+  cdm-example-service:
+    image: ghcr.io/modelingvaluegroup/service-brainstorm:servicesetup
+    ports:
+      - "80:80"
+      - "443:443"

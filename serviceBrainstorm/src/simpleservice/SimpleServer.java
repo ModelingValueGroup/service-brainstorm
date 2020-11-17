@@ -13,7 +13,7 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service;
+package simpleservice;
 
 import java.io.*;
 import java.net.*;
@@ -25,18 +25,24 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
-import service.examples.*;
+import simpleservice.util.*;
 
 public abstract class SimpleServer {
     private static final Charset             ENCODING    = StandardCharsets.UTF_8;
     private static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
     //
+    private final        String              protocol;
     private final        InetSocketAddress   address;
     private final        ServerSocket        serverSocket;
     private final        List<SimpleHandler> handlers    = new ArrayList<>();
     private              boolean             stop;
 
-    public SimpleServer(int port) {
+    public SimpleServer(String protocol) {
+        this(protocol,getDefaultPort(protocol));
+    }
+
+    public SimpleServer(String protocol, int port) {
+        this.protocol = protocol;
         address = new InetSocketAddress("0.0.0.0", port);
         serverSocket = makeServerSocketUnchecked(address);
     }
@@ -53,9 +59,11 @@ public abstract class SimpleServer {
         System.out.println("all server activity stopped.");
     }
 
-    protected abstract String getProtocol();
-
     protected abstract ServerSocket makeServerSocket(InetSocketAddress address) throws IOException, GeneralSecurityException;
+
+    protected String getProtocol() {
+        return protocol;
+    }
 
     public void addHandler(SimpleHandler handler) {
         handlers.add(handler);
@@ -63,7 +71,7 @@ public abstract class SimpleServer {
 
     public void start() {
         THREAD_POOL.submit(() -> {
-            System.out.println(getProtocol() + " server started at " + address);
+            System.out.printf("%-5s server started at %s\n", getProtocol(), address);
             while (!stop) {
                 try {
                     Socket socket = serverSocket.accept();
@@ -131,7 +139,7 @@ public abstract class SimpleServer {
             r.formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    form.%-25s : %s\n", e.getKey(), e.getValue()));
         }
         if (r.bodyLines != null) {
-            System.out.printf("    %-30s : %s\n", "body", r.bodyLines.size()+" lines");
+            System.out.printf("    %-30s : %s\n", "body", r.bodyLines.size() + " lines");
             r.bodyLines.forEach(l -> System.out.println("           | " + l));
         }
     }
@@ -139,6 +147,15 @@ public abstract class SimpleServer {
     private SimpleHandler determineHandler(SimpleRequest r) {
         List<SimpleHandler> matches = handlers.stream().filter(h -> h.isMatch(r)).sorted().collect(Collectors.toList());
         return matches.isEmpty() ? null : matches.get(0);
+    }
+
+    protected static int getDefaultPort(String protocol) {
+        String url = protocol + "//a.b";
+        try {
+            return new URL(url).getDefaultPort();
+        } catch (MalformedURLException e) {
+            throw new Error("could not determine default port for " + url, e);
+        }
     }
 
     private static void writeLine(BufferedWriter writer, String l) {

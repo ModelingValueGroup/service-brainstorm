@@ -13,47 +13,18 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service.examples;
+package fakeAvolaReplace;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
-import service.*;
+import simpleservice.*;
 
-public abstract class SimpleHandlerBase implements SimpleHandler {
-    public static final List<String> STOP_SERVER = new ArrayList<>(); // handle() can return this to stop the server
-    //
-    private final       String       methodPattern;
-    private final       String       pathPattern;
+public abstract class HandlerBase extends SimpleHandlerBase {
 
-    public SimpleHandlerBase(String methodPattern, String pathPattern) {
-        this.methodPattern = methodPattern;
-        this.pathPattern = pathPattern;
-    }
-
-    @Override
-    public String getMethodPattern() {
-        return methodPattern;
-    }
-
-    @Override
-    public String getPathPattern() {
-        return pathPattern;
-    }
-
-    public boolean isMatch(SimpleRequest r) {
-        String methodPattern = getMethodPattern();
-        String pathPattern   = getPathPattern();
-        return (pathPattern == null || r.path.matches(pathPattern)) && (methodPattern == null || r.method.matches(methodPattern));
-    }
-
-    public int compareTo(SimpleHandler o) {
-        Comparator<String>        keyComparator = Comparator.nullsLast(Comparator.comparingInt(String::length));
-        Comparator<SimpleHandler> m             = Comparator.comparing(SimpleHandler::getMethodPattern, keyComparator);
-        Comparator<SimpleHandler> p             = Comparator.comparing(SimpleHandler::getPathPattern, keyComparator);
-
-        return m.thenComparing(p).compare(this, o);
+    public HandlerBase(String methodPattern, String pathPattern) {
+        super(methodPattern, pathPattern);
     }
 
     public static List<String> smartConcat(Object... args) {
@@ -80,8 +51,8 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
 
     public static List<String> readResource(String name) {
         List<String> l        = new ArrayList<>();
-        String       fullName = SimpleHandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(SimpleHandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
+        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 l.add(line);

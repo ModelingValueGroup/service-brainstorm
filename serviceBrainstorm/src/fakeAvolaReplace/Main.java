@@ -13,37 +13,38 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service.examples;
+package fakeAvolaReplace;
 
 import java.util.*;
 
-import service.*;
+import simpleservice.*;
 
 public class Main {
-    public static final String OUR_URL                    = "http://fabhlth.api.execution.test.modelingvalue.nl";
-    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
-    public static final String AVOLA_IDENTITY_MANAGER_URL = "https://login.avo.la:444";
-    public static final String AVOLA_TOKEN_ENDPOINT_URL   = "https://login.avo.la/connect/token";
+    //    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
+    //    public static final String AVOLA_IDENTITY_MANAGER_URL = "https://login.avo.la:444";
+    //    public static final String AVOLA_TOKEN_ENDPOINT_URL   = "https://login.avo.la/connect/token";
     //
-    public static final String AUTHORITY_URL              = OUR_URL;
-    public static final String IDENTITY_MANAGER_URL       = OUR_URL + "/___/identity/manager";
-    public static final String TOKEN_ENDPOINT_URL         = OUR_URL + "/connect/token";
+    public static final String OUR_URL              = "http://fabhlth.api.execution.test.modelingvalue.nl";
+    public static final String AUTHORITY_URL        = OUR_URL;
+    public static final String IDENTITY_MANAGER_URL = OUR_URL + "/___/identity/manager";
+    public static final String TOKEN_ENDPOINT_URL   = OUR_URL + "/connect/token";
 
     public static void main(String... args) {
-        SimpleDualServer server = new SimpleDualServer(11080, 11443);
+        SimpleDualServer server = new SimpleDualServer();
 
-        server.addHandler(new DefaultHandler());
-        server.addHandler(new StopServerHandler());
         server.addHandler(new ApiSettingsHandler());
         server.addHandler(new ConnectTokenHandler());
         server.addHandler(new DecisionListHandler());
         server.addHandler(new ExecuteHandler());
 
+        server.addHandler(new DefaultHandler());
+        server.addHandler(new StopServerHandler());
+
         server.start();
         server.waitForDone();
     }
 
-    public static class ApiSettingsHandler extends SimpleHandlerBase {
+    public static class ApiSettingsHandler extends HandlerBase {
         public ApiSettingsHandler() {
             super("GET", "/api/Settings");
         }
@@ -62,7 +63,7 @@ public class Main {
         }
     }
 
-    public static class ConnectTokenHandler extends SimpleHandlerBase {
+    public static class ConnectTokenHandler extends HandlerBase {
         public ConnectTokenHandler() {
             super("POST", "/connect/token");
         }
@@ -77,7 +78,7 @@ public class Main {
         }
     }
 
-    public static class DecisionListHandler extends SimpleHandlerBase {
+    public static class DecisionListHandler extends HandlerBase {
         public DecisionListHandler() {
             super("GET", "/api/ApiExecution/decisions/list");
         }
@@ -88,7 +89,7 @@ public class Main {
         }
     }
 
-    public static class ExecuteHandler extends SimpleHandlerBase {
+    public static class ExecuteHandler extends HandlerBase {
         public ExecuteHandler() {
             super("POST", "/api/ApiExecution/execute");
         }
@@ -96,6 +97,27 @@ public class Main {
         @Override
         public List<String> handle(SimpleRequest r) {
             return readResource("execute.json");
+        }
+    }
+
+    public static class DefaultHandler extends HandlerBase {
+        public DefaultHandler() {
+            super(null, null);
+        }
+
+        public List<String> handle(SimpleRequest r) {
+            return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
+        }
+    }
+
+    public static class StopServerHandler extends HandlerBase {
+        public StopServerHandler() {
+            super("STOP", null);
+        }
+
+        @Override
+        public List<String> handle(SimpleRequest r) {
+            return STOP_SERVER;
         }
     }
 }

@@ -13,18 +13,16 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package service.examples;
+package simpleservice;
 
 import java.util.*;
 
-import service.*;
+public interface SimpleHandler extends Comparable<SimpleHandler> {
+    String getMethodPattern();
 
-public class DefaultHandler extends SimpleHandlerBase {
-    public DefaultHandler() {
-        super(null, null);
-    }
+    String getPathPattern();
 
-    public List<String> handle(SimpleRequest r) {
-        return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
-    }
+    List<String> handle(SimpleRequest r);
+
+    boolean isMatch(SimpleRequest r);
 }
