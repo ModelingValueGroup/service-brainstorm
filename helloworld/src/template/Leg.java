@@ -17,14 +17,25 @@ package template;
 
 import base.CDMClass;
 import base.CDMObject;
+import base.CDMProperty;
 
 public class Leg extends CDMObject {
 
-    private static final CDMClass<Leg> D_CLASS = CDMClass.of(Leg.class);
+    private static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("CONDITION", true);
+
+    private static final CDMClass<Leg>               D_CLASS   = CDMClass.of(Leg.class);
 
     @Override
     public CDMClass<Leg> dClass() {
         return D_CLASS;
+    }
+
+    public Condition getCondition() {
+        return CONDITION.get(this);
+    }
+
+    public void setCondition(Condition condition) {
+        CONDITION.set(this, condition);
     }
 
 }

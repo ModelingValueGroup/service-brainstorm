@@ -18,12 +18,12 @@ package template;
 import base.CDMClass;
 import base.CDMObject;
 
-public class Action extends CDMObject {
+public class Treatment extends CDMObject {
 
-    private static final CDMClass<Action> D_CLASS = CDMClass.of(Action.class);
+    private static final CDMClass<Treatment> D_CLASS = CDMClass.of(Treatment.class);
 
     @Override
-    public CDMClass<Action> dClass() {
+    public CDMClass<Treatment> dClass() {
         return D_CLASS;
     }
 

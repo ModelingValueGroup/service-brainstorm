@@ -15,7 +15,10 @@
 
 package template;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
+import org.modelingvalue.collections.List;
 import org.modelingvalue.dclare.State;
 import org.modelingvalue.dclare.UniverseTransaction;
 
@@ -23,15 +26,21 @@ class CaseTest {
 
     @Test
     void test1() {
-        Case geval = new Case();
-        UniverseTransaction tx = geval.transaction();
+        Case universe = new Case();
+        UniverseTransaction tx = universe.transaction();
         tx.put("start", () -> {
-
+            Person person = new Person();
+            universe.setPerson(person);
+            Leg left = new Leg();
+            Leg rigth = new Leg();
+            person.setLegs(List.of(left, rigth));
+            Condition condition = new Condition();
+            left.setCondition(condition);
         });
         tx.stop();
         State result = tx.waitForEnd();
-        result.get(() -> {
-            return null;
+        result.run(() -> {
+            assertNotNull(universe.getPlan());
         });
     }
 

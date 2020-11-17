@@ -30,6 +30,10 @@ public class CDMProperty<O extends CDMObject, T> {
 
     public static final Context<Boolean> STATEFULL = Context.of(false);
 
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id) {
+        return new CDMProperty<>(id, null, false, null, null);
+    }
+
     public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, V def) {
         return new CDMProperty<>(id, def, false, null, null);
     }
@@ -44,6 +48,10 @@ public class CDMProperty<O extends CDMObject, T> {
 
     public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, boolean containment, Function<C, V> deriver) {
         return new CDMProperty<>(id, null, containment, null, deriver);
+    }
+
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, boolean containment) {
+        return new CDMProperty<>(id, null, containment, null, null);
     }
 
     public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, V def, boolean containment) {

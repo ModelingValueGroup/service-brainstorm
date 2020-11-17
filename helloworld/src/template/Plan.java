@@ -23,16 +23,16 @@ import base.CDMProperty;
 
 public class Plan extends CDMObject {
 
-    private static final CDMProperty<Plan, List<Action>> ACTIONS = CDMProperty.of("ACTIONS", List.of(), true);
+    private static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true);
 
-    private static final CDMClass<Plan>                  D_CLASS = CDMClass.of(Plan.class, ACTIONS);
+    private static final CDMClass<Plan>                     D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
 
-    public List<Action> getActions() {
-        return ACTIONS.get(this);
+    public List<Treatment> getTreatments() {
+        return TREATMENTS.get(this);
     }
 
-    public void setActions(List<Action> actions) {
-        ACTIONS.set(this, actions);
+    public void setTreatment(List<Treatment> treatments) {
+        TREATMENTS.set(this, treatments);
     }
 
     @Override

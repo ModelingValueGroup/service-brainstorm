@@ -21,15 +21,32 @@ import base.CDMUniverse;
 
 public class Case extends CDMUniverse {
 
-    private static final CDMProperty<Case, Person> PERSON  = CDMProperty.of("PERSON", true, c -> new Person());
+    private static final CDMProperty<Case, Person> PERSON  = CDMProperty.of("PERSON", true);
 
-    private static final CDMProperty<Case, Plan>   PLAN    = CDMProperty.of("PLAN", true, c -> new Plan());
+    private static final CDMProperty<Case, Plan>   PLAN    = CDMProperty.of("PLAN", true,             //
+            c -> c.getPerson().getLegs().anyMatch(l -> l.getCondition() != null) ? new Plan() : null);
 
     private static final CDMClass<Case>            D_CLASS = CDMClass.of(Case.class, PERSON, PLAN);
 
     @Override
     public CDMClass<Case> dClass() {
         return D_CLASS;
+    }
+
+    public Person getPerson() {
+        return PERSON.get(this);
+    }
+
+    public void setPerson(Person person) {
+        PERSON.set(this, person);
+    }
+
+    public Plan getPlan() {
+        return PLAN.get(this);
+    }
+
+    public void setPlan(Plan plan) {
+        PLAN.set(this, plan);
     }
 
 }
