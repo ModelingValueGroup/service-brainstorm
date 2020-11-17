@@ -19,28 +19,14 @@ import org.modelingvalue.collections.List;
 import org.modelingvalue.collections.Set;
 import org.modelingvalue.dclare.Constant;
 import org.modelingvalue.dclare.Mutable;
-import org.modelingvalue.dclare.MutableClass;
-import org.modelingvalue.dclare.Observer;
-import org.modelingvalue.dclare.Setable;
+
+import base.MClass;
 
 public class Person implements Mutable {
 
     private static final Constant<Person, List<Leg>> LEGS    = Constant.of("LEGS", List.of(), true);
 
-    private static final MutableClass                D_CLASS =                                      //
-            new MutableClass() {
-
-                @Override
-                public Set<? extends Observer<?>> dObservers() {
-                    return Set.of();
-                }
-
-                @Override
-                public Set<? extends Setable<? extends Mutable, ?>> dSetables() {
-                    return Set.of(LEGS);
-                }
-
-            };
+    private static final MClass<Person>              D_CLASS = MClass.of(Person.class, Set.of(LEGS), Set.of());
 
     public List<Leg> getLegs() {
         return LEGS.get(this);
@@ -51,7 +37,7 @@ public class Person implements Mutable {
     }
 
     @Override
-    public MutableClass dClass() {
+    public MClass<Person> dClass() {
         return D_CLASS;
     }
 

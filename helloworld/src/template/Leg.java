@@ -15,6 +15,18 @@
 
 package template;
 
-public class Leg {
+import org.modelingvalue.collections.Set;
+import org.modelingvalue.dclare.Mutable;
+
+import base.MClass;
+
+public class Leg implements Mutable {
+
+    private static final MClass<Leg> D_CLASS = MClass.of(Leg.class, Set.of(), Set.of());
+
+    @Override
+    public MClass<Leg> dClass() {
+        return D_CLASS;
+    }
 
 }
