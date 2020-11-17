@@ -15,6 +15,8 @@
 
 package template;
 
+import static base.CDMTransaction.cdmUniverse;
+
 import org.modelingvalue.collections.List;
 
 import base.CDMClass;
@@ -23,7 +25,8 @@ import base.CDMProperty;
 
 public class Plan extends CDMObject {
 
-    private static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true);
+    private static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true,              //
+            p -> ((Case) cdmUniverse()).getPerson().getLegs().map(Leg::getCondition).notNull().map(c -> new Treatment(c)).toList());
 
     private static final CDMClass<Plan>                     D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
 

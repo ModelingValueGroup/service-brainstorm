@@ -50,6 +50,10 @@ public class CDMProperty<O extends CDMObject, T> {
         return new CDMProperty<>(id, null, containment, null, deriver);
     }
 
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, V def, boolean containment, Function<C, V> deriver) {
+        return new CDMProperty<>(id, null, containment, null, deriver);
+    }
+
     public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, boolean containment) {
         return new CDMProperty<>(id, null, containment, null, null);
     }

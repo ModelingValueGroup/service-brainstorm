@@ -24,7 +24,7 @@ public abstract class CDMUniverse extends CDMObject implements Universe {
     }
 
     public CDMTransaction transaction(Runnable init) {
-        return new CDMTransaction(this, init);
+        return new CDMTransaction(this, init, CDMProperty.STATEFULL.get());
     }
 
 }

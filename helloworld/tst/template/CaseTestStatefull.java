@@ -15,6 +15,7 @@
 
 package template;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -31,19 +32,21 @@ class CaseTestStatefull {
     void test3() {
         CDMProperty.STATEFULL.run(true, () -> {
             Case universe = new Case("test");
-            Person person = new Person("Wim");
-            Leg left = new Leg("left");
-            Leg rigth = new Leg("rigth");
-            Condition condition = new Condition("problem");
             CDMTransaction tx = universe.transaction(() -> {
+                Person person = new Person("Wim");
+                Leg left = new Leg("left");
+                Leg rigth = new Leg("rigth");
+                Condition condition1 = new Condition("problem1");
+                Condition condition2 = new Condition("problem2");
                 universe.setPerson(person);
                 person.setLegs(List.of(left, rigth));
-                left.setCondition(condition);
-                rigth.setCondition(null);
+                left.setCondition(condition1);
+                rigth.setCondition(condition2);
             });
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
+                assertEquals(universe.getPlan().getTreatments().size(), 2);
                 assertNotNull(universe.getPlan());
             });
         });
@@ -53,10 +56,10 @@ class CaseTestStatefull {
     void test4() {
         CDMProperty.STATEFULL.run(true, () -> {
             Case universe = new Case("test");
-            Person person = new Person("Wim");
-            Leg left = new Leg("left");
-            Leg rigth = new Leg("rigth");
             CDMTransaction tx = universe.transaction(() -> {
+                Person person = new Person("Wim");
+                Leg left = new Leg("left");
+                Leg rigth = new Leg("rigth");
                 universe.setPerson(person);
                 person.setLegs(List.of(left, rigth));
                 left.setCondition(null);
