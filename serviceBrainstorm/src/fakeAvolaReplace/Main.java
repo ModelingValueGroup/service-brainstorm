@@ -32,10 +32,10 @@ public class Main {
     public static void main(String... args) {
         SimpleDualServer server = new SimpleDualServer();
 
-        server.addHandler(new ApiSettingsHandler());
-        server.addHandler(new ConnectTokenHandler());
-        server.addHandler(new DecisionListHandler());
-        server.addHandler(new ExecuteHandler());
+        server.addHandler(new ApiSettingsHandler().with("GET", "/api/Settings"));
+        server.addHandler(new ConnectTokenHandler().with("POST", "/connect/token"));
+        server.addHandler(new DecisionListHandler().with("GET", "/api/ApiExecution/decisions/list"));
+        server.addHandler(new ExecuteHandler().with("POST", "/api/ApiExecution/execute"));
 
         server.addHandler(new DefaultHandler());
         server.addHandler(new StopServerHandler());
@@ -45,10 +45,6 @@ public class Main {
     }
 
     public static class ApiSettingsHandler extends HandlerBase {
-        public ApiSettingsHandler() {
-            super("GET", "/api/Settings");
-        }
-
         @Override
         public List<String> handle(SimpleRequest r) {
             Map<String, String> map = new HashMap<>();
@@ -64,10 +60,6 @@ public class Main {
     }
 
     public static class ConnectTokenHandler extends HandlerBase {
-        public ConnectTokenHandler() {
-            super("POST", "/connect/token");
-        }
-
         @Override
         public List<String> handle(SimpleRequest r) {
             Map<String, String> map = new HashMap<>();
@@ -79,10 +71,6 @@ public class Main {
     }
 
     public static class DecisionListHandler extends HandlerBase {
-        public DecisionListHandler() {
-            super("GET", "/api/ApiExecution/decisions/list");
-        }
-
         @Override
         public List<String> handle(SimpleRequest r) {
             return readResource("decision-list.json");
@@ -90,10 +78,6 @@ public class Main {
     }
 
     public static class ExecuteHandler extends HandlerBase {
-        public ExecuteHandler() {
-            super("POST", "/api/ApiExecution/execute");
-        }
-
         @Override
         public List<String> handle(SimpleRequest r) {
             return readResource("execute.json");
@@ -101,10 +85,6 @@ public class Main {
     }
 
     public static class DefaultHandler extends HandlerBase {
-        public DefaultHandler() {
-            super(null, null);
-        }
-
         public List<String> handle(SimpleRequest r) {
             return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
         }

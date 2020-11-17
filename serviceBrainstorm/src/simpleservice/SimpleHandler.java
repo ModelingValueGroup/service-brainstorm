@@ -18,6 +18,8 @@ package simpleservice;
 import java.util.*;
 
 public interface SimpleHandler extends Comparable<SimpleHandler> {
+    List<String> STOP_SERVER = new ArrayList<>(); // handle() can return this to stop the server
+
     String getMethodPattern();
 
     String getPathPattern();

@@ -105,7 +105,7 @@ public abstract class SimpleServer {
 
             if (handler != null) {
                 List<String> lines = handler.handle(r);
-                if (lines == SimpleHandlerBase.STOP_SERVER) {
+                if (lines == SimpleHandler.STOP_SERVER) {
                     stop = true;
                     serverSocket.close();
                 }

@@ -22,6 +22,8 @@ import java.util.stream.*;
 import simpleservice.*;
 
 public abstract class HandlerBase extends SimpleHandlerBase {
+    public HandlerBase() {
+    }
 
     public HandlerBase(String methodPattern, String pathPattern) {
         super(methodPattern, pathPattern);

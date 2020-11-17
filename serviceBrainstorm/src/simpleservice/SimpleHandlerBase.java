@@ -18,14 +18,21 @@ package simpleservice;
 import java.util.*;
 
 public abstract class SimpleHandlerBase implements SimpleHandler {
-    public static final List<String> STOP_SERVER = new ArrayList<>(); // handle() can return this to stop the server
-    //
-    protected final     String       methodPattern;
-    protected final     String       pathPattern;
+    protected String methodPattern;
+    protected String pathPattern;
+
+    public SimpleHandlerBase() {
+    }
 
     public SimpleHandlerBase(String methodPattern, String pathPattern) {
         this.methodPattern = methodPattern;
         this.pathPattern = pathPattern;
+    }
+
+    public SimpleHandlerBase with(String methodPattern, String pathPattern) {
+        this.methodPattern = methodPattern;
+        this.pathPattern = pathPattern;
+        return this;
     }
 
     @Override
@@ -39,9 +46,7 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
     }
 
     public boolean isMatch(SimpleRequest r) {
-        String methodPattern = getMethodPattern();
-        String pathPattern   = getPathPattern();
-        return (pathPattern == null || r.path.matches(pathPattern)) && (methodPattern == null || r.method.matches(methodPattern));
+        return (getPathPattern() == null || r.path.matches(getPathPattern())) && (getMethodPattern() == null || r.method.matches(getMethodPattern()));
     }
 
     public int compareTo(SimpleHandler o) {
