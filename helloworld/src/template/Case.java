@@ -1,21 +1,21 @@
 package template;
 
 import org.modelingvalue.collections.Set;
-import org.modelingvalue.dclare.Constant;
-import org.modelingvalue.dclare.Universe;
 
-import base.MClass;
+import base.DClass;
+import base.DProperty;
+import base.DUniverse;
 
-public class Case implements Universe {
+public class Case extends DUniverse {
 
-    private static final Constant<Case, Person> PERSON  = Constant.of("PERSON", true, c -> new Person());
+    private static final DProperty<Case, Person> PERSON  = DProperty.of("PERSON", true, c -> new Person());
 
-    private static final Constant<Case, Plan>   PLAN    = Constant.of("PLAN", true, c -> new Plan());
+    private static final DProperty<Case, Plan>   PLAN    = DProperty.of("PLAN", true, c -> new Plan());
 
-    private static final MClass<Case>           D_CLASS = MClass.of(Case.class, Set.of(PERSON, PLAN), Set.of());
+    private static final DClass<Case>            D_CLASS = DClass.of(Case.class, Set.of(PERSON, PLAN));
 
     @Override
-    public MClass<Case> dClass() {
+    public DClass<Case> dClass() {
         return D_CLASS;
     }
 

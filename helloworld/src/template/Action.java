@@ -1,16 +1,16 @@
 package template;
 
 import org.modelingvalue.collections.Set;
-import org.modelingvalue.dclare.Mutable;
 
-import base.MClass;
+import base.DClass;
+import base.DObject;
 
-public class Action implements Mutable {
+public class Action extends DObject {
 
-    private static final MClass<Action> D_CLASS = MClass.of(Action.class, Set.of(), Set.of());
+    private static final DClass<Action> D_CLASS = DClass.of(Action.class, Set.of());
 
     @Override
-    public MClass<Action> dClass() {
+    public DClass<Action> dClass() {
         return D_CLASS;
     }
 

@@ -17,16 +17,16 @@ package template;
 
 import org.modelingvalue.collections.List;
 import org.modelingvalue.collections.Set;
-import org.modelingvalue.dclare.Constant;
-import org.modelingvalue.dclare.Mutable;
 
-import base.MClass;
+import base.DClass;
+import base.DObject;
+import base.DProperty;
 
-public class Person implements Mutable {
+public class Person extends DObject {
 
-    private static final Constant<Person, List<Leg>> LEGS    = Constant.of("LEGS", List.of(), true);
+    private static final DProperty<Person, List<Leg>> LEGS    = DProperty.of("LEGS", List.of(), true);
 
-    private static final MClass<Person>              D_CLASS = MClass.of(Person.class, Set.of(LEGS), Set.of());
+    private static final DClass<Person>               D_CLASS = DClass.of(Person.class, Set.of(LEGS));
 
     public List<Leg> getLegs() {
         return LEGS.get(this);
@@ -37,7 +37,7 @@ public class Person implements Mutable {
     }
 
     @Override
-    public MClass<Person> dClass() {
+    public DClass<Person> dClass() {
         return D_CLASS;
     }
 
