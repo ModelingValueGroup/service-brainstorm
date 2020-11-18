@@ -20,7 +20,6 @@ import org.modelingvalue.collections.util.ContextThread.*;
 import org.modelingvalue.dclare.*;
 
 public class CDMTransaction extends UniverseTransaction {
-
     private static final boolean    STATEFULL = CDMProperty.STATEFULL.get();
     public static final ContextPool THE_POOL  = ContextThread.createPool();
 
@@ -43,9 +42,8 @@ public class CDMTransaction extends UniverseTransaction {
         return (CDMUniverse) LeafTransaction.getCurrent().universeTransaction().universe();
     }
 
-//    @Override
-//    protected void mainLoop(State start) {
-//        CDMProperty.STATEFULL.run(STATEFULL, () -> super.mainLoop(start));
-//    }
-
+    @Override
+    protected void mainLoop(State start) {
+        CDMProperty.STATEFULL.run(STATEFULL, () -> super.mainLoop(start));
+    }
 }

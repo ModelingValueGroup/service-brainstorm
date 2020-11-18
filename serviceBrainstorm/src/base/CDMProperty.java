@@ -69,16 +69,16 @@ public class CDMProperty<O extends CDMObject, T> {
         return new CDMProperty<>(id, def, false, opposite, deriver);
     }
 
-    private final Setable<O, T> setable=null;
+    private final Setable<O, T> setable;
     private final Observer<O>   observer;
 
     protected CDMProperty(Object id, T def, boolean containment, Supplier<CDMProperty<?, ?>> opposite, Function<O, T> deriver) {
         Supplier<Setable<?, ?>> os = opposite != null ? () -> opposite.get().setable : null;
         if (STATEFULL.get()) {
-           // this.setable = Observed.of(id, false, def, containment, os, null, true);
+            this.setable = Observed.of(id, false, def, containment, os, null, true);
             this.observer = deriver != null ? Observer.of(id, o -> set(o, deriver.apply(o))) : null;
         } else {
-           // this.setable = Constant.of(id, def, containment, os, null, deriver, true);
+            this.setable = Constant.of(id, def, containment, os, null, deriver, true);
             this.observer = null;
         }
     }
