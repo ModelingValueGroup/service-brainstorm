@@ -1,10 +1,8 @@
-# template-java
-Skeleton for a java project.
+# service-brainstorm
+Scratch project to grow a service generator.
 
 ## maven dependencies
-To get all the dependencies in your ```lib``` folder: use the following commands:
+To get all the dependencies in your ```lib``` folder: use the following command:
 ````bash
-mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib
-mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=javadoc
-mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=sources
+./prepare.sh
 ````

@@ -14,11 +14,13 @@
     <path refid="${module.jdk.classpath.servicebrainstorm}"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
+    <path refid="library.gen:_mvgjson.classpath"/>
   </path>
   <path id="servicebrainstorm.runtime.production.module.classpath">
     <pathelement location="${servicebrainstorm.output.dir}"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
+    <path refid="library.gen:_mvgjson.classpath"/>
   </path>
   <path id="servicebrainstorm.module.classpath">
     <path refid="${module.jdk.classpath.servicebrainstorm}"/>
@@ -32,6 +34,7 @@
     <path refid="library.gen:_opentest4j.classpath"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
+    <path refid="library.gen:_mvgjson.classpath"/>
   </path>
   <path id="servicebrainstorm.runtime.module.classpath">
     <pathelement location="${servicebrainstorm.testoutput.dir}"/>
@@ -45,6 +48,7 @@
     <path refid="library.gen:_opentest4j.classpath"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
+    <path refid="library.gen:_mvgjson.classpath"/>
   </path>
   <patternset id="excluded.from.module.servicebrainstorm">
     <patternset refid="ignored.files"/>

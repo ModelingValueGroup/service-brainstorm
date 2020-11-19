@@ -20,7 +20,6 @@ import java.net.*;
 import java.nio.charset.*;
 import java.security.*;
 import java.util.*;
-import java.util.Map.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
@@ -28,8 +27,8 @@ import java.util.stream.*;
 import simpleservice.util.*;
 
 public abstract class SimpleServer {
-    private static final Charset             ENCODING    = StandardCharsets.UTF_8;
-    private static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
+    public static final Charset             ENCODING    = StandardCharsets.UTF_8;
+    public static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
     //
     private final        String              protocol;
     private final        InetSocketAddress   address;
@@ -87,6 +86,15 @@ public abstract class SimpleServer {
         });
     }
 
+    public void stop() {
+        try {
+            stop = true;
+            serverSocket.close();
+        } catch (IOException e) {
+            // ignore, what can we do if close throws up
+        }
+    }
+
     private ServerSocket makeServerSocketUnchecked(InetSocketAddress address) {
         try {
             return makeServerSocket(address);
@@ -98,25 +106,11 @@ public abstract class SimpleServer {
     private void handle(Socket socket) {
         System.out.println(">>> handling " + getProtocol() + " request....");
         try (socket) {
-            SimpleRequest r       = new SimpleRequest(socket, ENCODING);
-            SimpleHandler handler = determineHandler(r);
-
-            log(r, handler);
-
-            if (handler != null) {
-                List<String> lines = handler.handle(r);
-                if (lines == SimpleHandler.STOP_SERVER) {
-                    stop = true;
-                    serverSocket.close();
-                }
-                Stream.concat(Stream.of(
-                        "HTTP/1.1 200 OK",
-                        "Content-Length: " + lines.stream().mapToInt(l -> l.getBytes(SimpleServer.ENCODING).length + 2).sum(),
-                        "Content-Type: text/plain; charset=" + ENCODING.displayName(),
-                        "" // An empty line marks the end of the response's header
-                ), lines.stream()).forEach(l -> writeLine(r.writer, l));
-                r.writer.flush();
-            }
+            SimpleRequest  request  = new SimpleRequest(socket, ENCODING);
+            SimpleHandler  handler  = determineHandler(request);
+            SimpleResponse response = new SimpleResponse(request, handler);
+            request.trace();
+            response.handle();
         } catch (IgnoreableError e) {
             System.err.println("ignoreable problem while handling request: " + e.getMessage());
         } catch (Throwable e) {
@@ -124,23 +118,6 @@ public abstract class SimpleServer {
             e.printStackTrace();
         } finally {
             System.out.println("<<< " + getProtocol() + " request handled.");
-        }
-    }
-
-    private void log(SimpleRequest r, SimpleHandler handler) {
-        System.out.printf("    %-30s : %s\n", "host", r.hostAddress);
-        System.out.printf("    %-30s : %s\n", "method", r.method);
-        System.out.printf("    %-30s : %s\n", "path", r.path);
-        System.out.printf("    %-30s : %s\n", "handler", handler == null ? "<none>" : handler.getClass().getSimpleName());
-        if (r.headers != null) {
-            r.headers.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    header.%-23s : %s\n", e.getKey(), e.getValue()));
-        }
-        if (r.formData != null) {
-            r.formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    form.%-25s : %s\n", e.getKey(), e.getValue()));
-        }
-        if (r.bodyLines != null) {
-            System.out.printf("    %-30s : %s\n", "body", r.bodyLines.size() + " lines");
-            r.bodyLines.forEach(l -> System.out.println("           | " + l));
         }
     }
 
@@ -155,15 +132,6 @@ public abstract class SimpleServer {
             return new URL(url).getDefaultPort();
         } catch (MalformedURLException e) {
             throw new Error("could not determine default port for " + url, e);
-        }
-    }
-
-    private static void writeLine(BufferedWriter writer, String l) {
-        try {
-            writer.write(l);
-            writer.write("\r\n");
-        } catch (IOException e) {
-            throw new Error("couln not write response " + l, e);
         }
     }
 

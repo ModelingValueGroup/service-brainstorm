@@ -13,14 +13,24 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package simpleservice;
+package cdmService;
 
-public interface SimpleHandler extends Comparable<SimpleHandler> {
-    String getMethodPattern();
+import simpleservice.*;
 
-    String getPathPattern();
+public class Main {
+    public static void main(String... args) {
+        SimpleDualServer server = makeServer();
+        server.start();
+        server.waitForDone();
+    }
 
-    void handle(SimpleRequest request,SimpleResponse response);
+    public static SimpleDualServer makeServer() {
+        SimpleDualServer server = new SimpleDualServer();
 
-    boolean isMatch(SimpleRequest request);
+        server.addHandler(TokenManager.getHandler());
+        server.addHandler(Api.getHandler());
+        //server.addHandler(View.getHandler());
+
+        return server;
+    }
 }

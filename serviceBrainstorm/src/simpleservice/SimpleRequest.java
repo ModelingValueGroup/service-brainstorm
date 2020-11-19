@@ -19,12 +19,18 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.Map.*;
 
 import javax.net.ssl.*;
+
+import org.modelingvalue.json.*;
 
 import simpleservice.util.*;
 
 public class SimpleRequest {
+    public static final String CONTENT_TYPE_FORM_DATA = "application/x-www-form-urlencoded";
+    public static final String CONTENT_TYPE_JSON      = "application/json";
+
     public String              hostAddress;
     public String              method;
     public String              path;
@@ -39,6 +45,7 @@ public class SimpleRequest {
     //
     public Map<String, String> headers;
     public Map<String, String> formData;
+    public Object              jsonData;
     public List<String>        bodyLines;
 
     public SimpleRequest(Socket socket, Charset encoding) {
@@ -103,9 +110,9 @@ public class SimpleRequest {
             writer.flush();
         }
 
-        if ("application/x-www-form-urlencoded".equals(contentType)) {
+        if (CONTENT_TYPE_FORM_DATA.equals(contentType)) {
             readFormData();
-        } else if ("application/json".equals(contentType)) {
+        } else if (CONTENT_TYPE_JSON.equals(contentType)) {
             readJson();
         } else {
             readBodyLines();
@@ -132,7 +139,7 @@ public class SimpleRequest {
         if (contentLength < 0) {
             throw new Error("json requires Content-Length in header");
         }
-        bodyLines = Collections.unmodifiableList(Collections.singletonList(new String(read(reader, contentLength))));
+        jsonData = new FromJson().fromJson(new String(read(reader, contentLength)));
     }
 
     private void readBodyLines() throws IOException {
@@ -146,6 +153,39 @@ public class SimpleRequest {
             }
         }
         bodyLines = Collections.unmodifiableList(lines);
+    }
+
+    public void trace() {
+        System.out.println("    -------------------------------------------------------------------------");
+        System.out.printf("    >%-30s : %s\n", "host", hostAddress);
+        System.out.printf("    >%-30s : %s\n", "method", method);
+        System.out.printf("    >%-30s : %s\n", "path", path);
+        if (headers != null && !headers.isEmpty()) {
+            System.out.println("    -------------------------------------------------------------------------");
+            headers.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >header.%-23s : %s\n", e.getKey(), e.getValue()));
+        }
+        if (formData != null && !formData.isEmpty()) {
+            System.out.println("    -------------------------------------------------------------------------");
+            formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >form.%-25s : %s\n", e.getKey(), e.getValue()));
+        }
+        if (jsonData != null) {
+            System.out.println("    -------------------------------------------------------------------------");
+            if (jsonData instanceof Map<?, ?>) {
+                @SuppressWarnings("unchecked") Map<String, ?> map = (Map<String, ?>) jsonData;
+                map.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >json.%-25s : %s\n", e.getKey(), e.getValue()));
+            } else if (jsonData instanceof List<?>) {
+                List<?> list = (List<?>) jsonData;
+                list.forEach(e -> System.out.printf("    >%-30s : %s\n", "json[]", e));
+            } else {
+                System.out.printf("    >%-30s : %s\n", "json", jsonData);
+            }
+        }
+        if (bodyLines != null && !bodyLines.isEmpty()) {
+            System.out.println("    -------------------------------------------------------------------------");
+            System.out.printf("    >%-30s : %s\n", "body", bodyLines.size() + " lines");
+            bodyLines.forEach(l -> System.out.println("        | " + l));
+        }
+        System.out.println("    -------------------------------------------------------------------------");
     }
 
     private static char[] read(BufferedReader reader, int length) {

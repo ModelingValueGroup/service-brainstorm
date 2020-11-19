@@ -17,5 +17,6 @@
     <orderEntry type="library" scope="TEST" name="gen: opentest4j" level="project" />
     <orderEntry type="library" name="gen: dclare" level="project" />
     <orderEntry type="library" name="gen: immutable-collections" level="project" />
+    <orderEntry type="library" name="gen: mvgjson" level="project" />
   </component>
 </module>

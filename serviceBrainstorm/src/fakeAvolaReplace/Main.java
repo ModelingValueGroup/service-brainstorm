@@ -38,7 +38,6 @@ public class Main {
         server.addHandler(new ExecuteHandler()/*     */.with("POST"/**/, "/api/ApiExecution/execute"));
 
         server.addHandler(new DefaultHandler());
-        server.addHandler(new StopServerHandler());
 
         server.start();
         server.waitForDone();
@@ -46,18 +45,18 @@ public class Main {
 
     public static class ConnectTokenHandler extends HandlerBase {
         @Override
-        public List<String> handle(SimpleRequest r) {
+        public void handle(SimpleRequest request, SimpleResponse response) {
             Map<String, String> map = new HashMap<>();
             map.put("access_token", "__bogus__access__token__");
             map.put("expires_in", "3600");
             map.put("token_type", "Bearer");
-            return smartConcat(map);
+            response.addToBody(smartConcat(map));
         }
     }
 
     public static class ApiSettingsHandler extends HandlerBase {
         @Override
-        public List<String> handle(SimpleRequest r) {
+        public void handle(SimpleRequest request, SimpleResponse response) {
             Map<String, String> map = new HashMap<>();
             map.put("APIVersion", "2.1.13.0");
             map.put("ApiType", "Execution");
@@ -66,39 +65,28 @@ public class Main {
             map.put("IdentityManager", IDENTITY_MANAGER_URL);
             map.put("Organisation", "fabhlth");
             map.put("TokenEndpoint", TOKEN_ENDPOINT_URL);
-            return smartConcat(map);
+            response.addToBody(smartConcat(map));
         }
 
     }
 
     public static class DecisionListHandler extends HandlerBase {
         @Override
-        public List<String> handle(SimpleRequest r) {
-            return readResource("decision-list.json");
+        public void handle(SimpleRequest request, SimpleResponse response) {
+            response.addToBody( readResource("decision-list.json"));
         }
     }
 
     public static class ExecuteHandler extends HandlerBase {
         @Override
-        public List<String> handle(SimpleRequest r) {
-            return readResource("execute.json");
+        public void handle(SimpleRequest request, SimpleResponse response) {
+            response.addToBody( readResource("execute.json"));
         }
     }
 
     public static class DefaultHandler extends HandlerBase {
-        public List<String> handle(SimpleRequest r) {
-            return Arrays.asList("{", "   'error': 'resistence is futile'", "}");
-        }
-    }
-
-    public static class StopServerHandler extends HandlerBase {
-        public StopServerHandler() {
-            super("STOP", null);
-        }
-
-        @Override
-        public List<String> handle(SimpleRequest r) {
-            return STOP_SERVER;
+        public void handle(SimpleRequest request, SimpleResponse response) {
+            response.addToBody( Arrays.asList("{", "   'error': 'resistence is futile'", "}"));
         }
     }
 }

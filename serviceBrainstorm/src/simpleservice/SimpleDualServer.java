@@ -34,6 +34,11 @@ public class SimpleDualServer {
         httpsServer.start();
     }
 
+    public void stop() {
+        httpServer.stop();
+        httpsServer.stop();
+    }
+
     public void waitForDone() {
         SimpleServer.waitForDone();
     }

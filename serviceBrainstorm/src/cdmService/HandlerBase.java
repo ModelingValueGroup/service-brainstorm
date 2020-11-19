@@ -13,14 +13,32 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package simpleservice;
+package cdmService;
 
-public interface SimpleHandler extends Comparable<SimpleHandler> {
-    String getMethodPattern();
+import java.io.*;
+import java.util.*;
 
-    String getPathPattern();
+import simpleservice.*;
 
-    void handle(SimpleRequest request,SimpleResponse response);
+public abstract class HandlerBase extends SimpleHandlerBase {
+    public HandlerBase() {
+    }
 
-    boolean isMatch(SimpleRequest request);
+    public HandlerBase(String methodPattern, String pathPattern) {
+        super(methodPattern, pathPattern);
+    }
+
+    public static List<String> readResource(String name) {
+        List<String> l        = new ArrayList<>();
+        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                l.add(line);
+            }
+        } catch (IOException e) {
+            throw new Error("problem reading " + name, e);
+        }
+        return l;
+    }
 }
