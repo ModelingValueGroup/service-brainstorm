@@ -19,8 +19,12 @@ public class EksampleInputView {
         return x;
     }
 
-    private List<Leg> makeLegs(java.util.List<Object> legs) {
-        return List.of(legs.stream().map(m -> makeLeg((Map<String, Object>) m)).collect(Collectors.toList()));
+    private List<Leg> makeLegs(java.util.List<Object> list) {
+        List<Leg> x = List.of();
+        if (list != null) {
+            x = List.of(list.stream().map(m -> makeLeg((Map<String, Object>) m)).collect(Collectors.toList()));
+        }
+        return x;
     }
 
     private Leg makeLeg(Map<String, Object> map) {
@@ -31,8 +35,11 @@ public class EksampleInputView {
     }
 
     private Condition makeCondition(Map<String, Object> map) {
-        Condition x = new Condition(map.computeIfAbsent("id", k -> newConditionId()));
-        // nothing in view
+        Condition x = null;
+        if (map != null) {
+            x = new Condition(map.computeIfAbsent("id", k -> newConditionId()));
+            // nothing in view
+        }
         return x;
     }
 

@@ -9,15 +9,19 @@ public class EksampleOutputView {
 
     private Map<String, Object> extractCase(Case x) {
         Map<String, Object> map = new HashMap<>();
-        map.put("id",x.getId().toString());
-        map.put("plan",extractPlan(x.getPlan()));
+        map.put("id", x.getId().toString());
+        if (x.getPlan() != null) {
+            map.put("plan", extractPlan(x.getPlan()));
+        }
         return map;
     }
 
     private Map<String, Object> extractPlan(Plan x) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", x.getId().toString());
-        map.put("treatments", extractTreatments(x.getTreatments()));
+        if (x.getTreatments() != null) {
+            map.put("treatments", extractTreatments(x.getTreatments()));
+        }
         return map;
     }
 

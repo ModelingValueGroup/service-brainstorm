@@ -1,0 +1,14 @@
+{
+  "id": "test",
+  "person": {
+    "id": "Wim",
+    "legs": [
+      {
+        "id": "left"
+      },
+      {
+        "id": "right"
+      }
+    ]
+  }
+}

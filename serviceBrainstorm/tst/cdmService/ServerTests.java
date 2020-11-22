@@ -69,15 +69,34 @@ public class ServerTests {
     }
 
     @Test
-    public void eksampleTest() {
+    public void eksampleTest1() {
         Assertions.assertDoesNotThrow(() -> {
-            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\"id\":\"test\",\"person\":{\"id\":\"Wim\",\"legs\":[{\"id\":\"left\",\"condition\":{\"id\":\"problem1\"}},{\"id\":\"right\",\"condition\":{\"id\":\"problem2\"}}]}}");
+            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
+                    "  \"id\": \"test\",\n" +
+                    "  \"person\": {\n" +
+                    "    \"id\": \"Wim\",\n" +
+                    "    \"legs\": [\n" +
+                    "      {\n" +
+                    "        \"id\": \"left\",\n" +
+                    "        \"condition\": {\n" +
+                    "          \"id\": \"problem1\"\n" +
+                    "        }\n" +
+                    "      },\n" +
+                    "      {\n" +
+                    "        \"id\": \"right\",\n" +
+                    "        \"condition\": {\n" +
+                    "          \"id\": \"problem2\"\n" +
+                    "        }\n" +
+                    "      }\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "}");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
             Assertions.assertEquals(2, outputMap.size());
             Assertions.assertNotNull(outputMap.get("id"));
-            Assertions.assertEquals("test",outputMap.get("id"));
+            Assertions.assertEquals("test", outputMap.get("id"));
             Assertions.assertNotNull(outputMap.get("plan"));
             Assertions.assertTrue(Map.class.isAssignableFrom(outputMap.get("plan").getClass()));
             Map<String, Object> plan = (Map<String, Object>) outputMap.get("plan");
@@ -96,8 +115,34 @@ public class ServerTests {
 
                 Assertions.assertEquals(1, treatment.size());
                 Assertions.assertNotNull(treatment.get("id"));
-                Assertions.assertEquals("Condition:problem"+(i+1), treatment.get("id"));
+                Assertions.assertEquals("Condition:problem" + (i + 1), treatment.get("id"));
             }
+        });
+    }
+
+    @Test
+    public void eksampleTest2() {
+        Assertions.assertDoesNotThrow(() -> {
+            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
+                    "  \"id\": \"test\",\n" +
+                    "  \"person\": {\n" +
+                    "    \"id\": \"Wim\",\n" +
+                    "    \"legs\": [\n" +
+                    "      {\n" +
+                    "        \"id\": \"left\"\n" +
+                    "      },\n" +
+                    "      {\n" +
+                    "        \"id\": \"right\"\n" +
+                    "      }\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "}");
+            Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
+
+            Assertions.assertEquals(1, outputMap.size());
+            Assertions.assertNotNull(outputMap.get("id"));
+            Assertions.assertEquals("test", outputMap.get("id"));
         });
     }
 
