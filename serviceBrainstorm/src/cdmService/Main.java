@@ -25,7 +25,7 @@ public class Main {
     }
 
     public static SimpleDualServer makeServer() {
-        SimpleDualServer server = new SimpleDualServer();
+        SimpleDualServer server = new SimpleDualServer(11080,11443);
 
         server.addHandler(TokenManager.getHandler());
         server.addHandler(Api.getHandler());

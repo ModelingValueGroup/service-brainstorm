@@ -19,6 +19,11 @@ public class SimpleDualServer {
     private final SimpleHttpServer  httpServer;
     private final SimpleHttpsServer httpsServer;
 
+    public SimpleDualServer(int httpPort, int httpsPort) {
+        httpServer = new SimpleHttpServer(httpPort);
+        httpsServer = new SimpleHttpsServer(httpsPort);
+    }
+
     public SimpleDualServer() {
         httpServer = new SimpleHttpServer();
         httpsServer = new SimpleHttpsServer();
