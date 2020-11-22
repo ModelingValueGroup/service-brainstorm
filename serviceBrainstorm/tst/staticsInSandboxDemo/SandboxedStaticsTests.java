@@ -65,14 +65,15 @@ public class SandboxedStaticsTests {
 
     private DynamicTest dynamicTestInIsolation(String testName, String classNamePattern) {
         try {
-            String klassName = getClass().getName();
-            String klassFile = '/' + klassName.replace('.', '/') + ".class";
-            URL    rawLoc = getClass().getResource(klassFile);
-            String file   = rawLoc.getFile();
-            URL    dirLoc = file.endsWith(".class") ? new URL("file:" + file.replace(klassFile, "/")) : rawLoc;
-            System.err.println("@@@@ rawLoc of " + getClass().getName() + " = " + rawLoc + " => using " + dirLoc + " for classloader");
+            final Class<?> myClass   = getClass();
+            String         klassName = myClass.getName();
+            String         klassFile = '/' + klassName.replace('.', '/') + ".class";
+            URL            rawLoc    = myClass.getResource(klassFile);
+            String         file      = rawLoc.getFile();
+            URL            dirLoc    = file.endsWith(".class") ? new URL("file:" + file.replace(klassFile, "/")) : rawLoc;
+            System.err.println("@@@@ rawLoc of " + myClass.getName() + " = " + rawLoc + " => using " + dirLoc + " for classloader");
 
-            URLClassLoader testClassLoader = new URLClassLoader(new URL[]{dirLoc}) {
+            URLClassLoader testClassLoader = new URLClassLoader(new URL[]{dirLoc}, myClass.getClassLoader()) {
                 @Override
                 public Class<?> loadClass(String name) throws ClassNotFoundException {
                     Class<?> c;
