@@ -15,20 +15,21 @@
 
 package template;
 
-import static base.CDMTransaction.cdmUniverse;
+import static base.CDMTransaction.*;
 
-import org.modelingvalue.collections.List;
+import org.modelingvalue.collections.*;
 
-import base.CDMClass;
-import base.CDMObject;
-import base.CDMProperty;
+import base.*;
 
 public class Plan extends CDMObject {
 
-    private static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true,              //
-            p -> ((Case) cdmUniverse()).getPerson().getLegs().map(Leg::getCondition).notNull().map(c -> new Treatment(c)).toList());
+    private static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of(
+            "TREATMENTS",
+            List.of(), true,
+            p -> ((Case) cdmUniverse()).getPerson().getLegs().map(Leg::getCondition).notNull().map(Treatment::new).toList()
+    );
 
-    private static final CDMClass<Plan>                     D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
+    private static final CDMClass<Plan> D_CLASS = CDMClass.of(Plan.class, TREATMENTS);
 
     public Plan(Object id) {
         super(id);
@@ -38,7 +39,7 @@ public class Plan extends CDMObject {
         return TREATMENTS.get(this);
     }
 
-    public void setTreatment(List<Treatment> treatments) {
+    public void setTreatments(List<Treatment> treatments) {
         TREATMENTS.set(this, treatments);
     }
 

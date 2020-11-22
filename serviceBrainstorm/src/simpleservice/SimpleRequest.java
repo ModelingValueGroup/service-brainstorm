@@ -25,11 +25,10 @@ import javax.net.ssl.*;
 
 import org.modelingvalue.json.*;
 
-import simpleservice.util.*;
-
 public class SimpleRequest {
-    public static final String CONTENT_TYPE_FORM_DATA = "application/x-www-form-urlencoded";
-    public static final String CONTENT_TYPE_JSON      = "application/json";
+    public static final String CONTENT_TYPE_FORM_DATA   = "application/x-www-form-urlencoded";
+    public static final String CONTENT_TYPE_JSON        = "application/json";
+    public static final String CONTENT_TYPE_JSON_SCHEMA = "application/schema+json";
 
     public String              hostAddress;
     public String              method;
@@ -46,6 +45,7 @@ public class SimpleRequest {
     public Map<String, String> headers;
     public Map<String, String> formData;
     public Object              jsonData;
+    public Object              jsonSchemaData;
     public List<String>        bodyLines;
 
     public SimpleRequest(Socket socket, Charset encoding) {
@@ -109,17 +109,23 @@ public class SimpleRequest {
             writer.write("HTTP/1.1 100 Continue\r\n\r\n");
             writer.flush();
         }
-
-        if (CONTENT_TYPE_FORM_DATA.equals(contentType)) {
-            readFormData();
-        } else if (CONTENT_TYPE_JSON.equals(contentType)) {
-            readJson();
-        } else {
-            readBodyLines();
+        switch (contentType) {
+        case CONTENT_TYPE_FORM_DATA:
+            formData = readFormData();
+            break;
+        case CONTENT_TYPE_JSON:
+            jsonData = readJson();
+            break;
+        case CONTENT_TYPE_JSON_SCHEMA:
+            jsonSchemaData = readJson();
+            break;
+        default:
+            bodyLines = readBodyLines();
+            break;
         }
     }
 
-    private void readFormData() {
+    private Map<String, String> readFormData() {
         if (contentLength < 0) {
             throw new Error("form data requires Content-Length in header");
         }
@@ -132,17 +138,17 @@ public class SimpleRequest {
             String   v   = k_v.length == 2 ? URLDecoder.decode(k_v[1], Charset.defaultCharset()) : null;
             map.put(k, v);
         }
-        formData = Collections.unmodifiableMap(map);
+        return Collections.unmodifiableMap(map);
     }
 
-    private void readJson() {
+    private Object readJson() {
         if (contentLength < 0) {
             throw new Error("json requires Content-Length in header");
         }
-        jsonData = new FromJson().fromJson(new String(read(reader, contentLength)));
+        return Json.fromJson(new String(read(reader, contentLength)));
     }
 
-    private void readBodyLines() throws IOException {
+    private List<String> readBodyLines() throws IOException {
         List<String> lines = new ArrayList<>();
         if (0 < contentLength) {
             String all = new String(read(reader, contentLength));
@@ -152,42 +158,10 @@ public class SimpleRequest {
                 lines.add(line);
             }
         }
-        bodyLines = Collections.unmodifiableList(lines);
+        return Collections.unmodifiableList(lines);
     }
 
-    public void trace() {
-        System.out.println("    -------------------------------------------------------------------------");
-        System.out.printf("    >%-30s : %s\n", "host", hostAddress);
-        System.out.printf("    >%-30s : %s\n", "method", method);
-        System.out.printf("    >%-30s : %s\n", "path", path);
-        if (headers != null && !headers.isEmpty()) {
-            System.out.println("    -------------------------------------------------------------------------");
-            headers.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >header.%-23s : %s\n", e.getKey(), e.getValue()));
-        }
-        if (formData != null && !formData.isEmpty()) {
-            System.out.println("    -------------------------------------------------------------------------");
-            formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >form.%-25s : %s\n", e.getKey(), e.getValue()));
-        }
-        if (jsonData != null) {
-            System.out.println("    -------------------------------------------------------------------------");
-            if (jsonData instanceof Map<?, ?>) {
-                @SuppressWarnings("unchecked") Map<String, ?> map = (Map<String, ?>) jsonData;
-                map.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >json.%-25s : %s\n", e.getKey(), e.getValue()));
-            } else if (jsonData instanceof List<?>) {
-                List<?> list = (List<?>) jsonData;
-                list.forEach(e -> System.out.printf("    >%-30s : %s\n", "json[]", e));
-            } else {
-                System.out.printf("    >%-30s : %s\n", "json", jsonData);
-            }
-        }
-        if (bodyLines != null && !bodyLines.isEmpty()) {
-            System.out.println("    -------------------------------------------------------------------------");
-            System.out.printf("    >%-30s : %s\n", "body", bodyLines.size() + " lines");
-            bodyLines.forEach(l -> System.out.println("        | " + l));
-        }
-        System.out.println("    -------------------------------------------------------------------------");
-    }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private static char[] read(BufferedReader reader, int length) {
         char[] buf = new char[length];
         try {
@@ -206,5 +180,52 @@ public class SimpleRequest {
             throw new Error("problem reading form data", e);
         }
         return buf;
+    }
+
+    public void trace() {
+        System.out.println("    -------------------------------------------------------------------------");
+        System.out.printf("    >%-30s : %s\n", "host", hostAddress);
+        System.out.printf("    >%-30s : %s\n", "method", method);
+        System.out.printf("    >%-30s : %s\n", "path", path);
+        if (headers != null && !headers.isEmpty()) {
+            traceMap(headers, "header");
+        }
+        if (formData != null && !formData.isEmpty()) {
+            traceMap(formData, "form");
+        }
+        if (jsonData != null) {
+            traceJson(jsonData, "json");
+        }
+        if (jsonSchemaData != null) {
+            traceJson(jsonSchemaData, "jsonschema");
+        }
+        if (bodyLines != null && !bodyLines.isEmpty()) {
+            traceLines(bodyLines, "body");
+        }
+        System.out.println("    -------------------------------------------------------------------------");
+    }
+
+    private static void traceMap(Map<String, String> formData, final String name) {
+        System.out.println("    -------------------------------------------------------------------------");
+        formData.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >%-30s : %s\n", name + "." + e.getKey(), e.getValue()));
+    }
+
+    private static void traceJson(Object json, final String name) {
+        System.out.println("    -------------------------------------------------------------------------");
+        if (json instanceof Map<?, ?>) {
+            @SuppressWarnings("unchecked") Map<String, ?> map = (Map<String, ?>) json;
+            map.entrySet().stream().sorted(Entry.comparingByKey()).forEach(e -> System.out.printf("    >%-30s : %s\n", name + "." + e.getKey(), e.getValue()));
+        } else if (json instanceof List<?>) {
+            List<?> list = (List<?>) json;
+            list.forEach(e -> System.out.printf("    >%-30s : %s\n", "json[]", e));
+        } else {
+            System.out.printf("    >%-30s : %s\n", "json", json);
+        }
+    }
+
+    private static void traceLines(List<String> lines, String name) {
+        System.out.println("    -------------------------------------------------------------------------");
+        System.out.printf("    >%-30s : %s\n", name, lines.size() + " lines");
+        lines.forEach(l -> System.out.println("        | " + l));
     }
 }

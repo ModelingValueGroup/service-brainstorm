@@ -24,8 +24,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
-import simpleservice.util.*;
-
 public abstract class SimpleServer {
     public static final Charset             ENCODING    = StandardCharsets.UTF_8;
     public static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());

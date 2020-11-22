@@ -64,7 +64,7 @@ public class SimpleResponse {
     }
 
     public void trace() {
-        System.out.printf("    <%-30s : %s\n", "handler", handler == null ? "<none>" : handler.getClass().getSimpleName());
+        System.out.printf("    <%-30s : %s\n", "handler", handler == null ? "<none>" : handler.getClass().getName());
         System.out.printf("    <%-30s : %s\n", "response", renderResponseLine());
         if (!headers.isEmpty()) {
             System.out.println("    -------------------------------------------------------------------------");

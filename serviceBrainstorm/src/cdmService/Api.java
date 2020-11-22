@@ -28,6 +28,7 @@ public class Api {
     public static final String TOKEN_PATH     = "/token";
     public static final String API_PATH       = "/api";
     public static final String INFO_PATH      = API_PATH + "/info";
+    public static final String VIEW_PATH_PATT = API_PATH + "/view(/.*)?";
     //
     public static final String API_ENDPOINT   = BASE_URL + API_PATH;
     public static final String TOKEN_ENDPOINT = BASE_URL + TOKEN_PATH;
@@ -47,15 +48,13 @@ public class Api {
 
     public static class Handler extends HandlerBase {
         public Handler() {
-            super("GET", INFO_PATH);
+            super("(GET|POST)", INFO_PATH);
         }
 
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            if (!TokenManager.TOKEN_MANAGER.isBearer(request.headers.get("Authorization"))) {
-                throw new SimpleProblem("not authorized");
-            }
-            String s = new ToJson().toJson(new ApiInfo());
+            TokenManager.authorize(request);
+            String s = Json.toJson(new ApiInfo());
             response.addToBody(s);
         }
     }

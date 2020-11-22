@@ -22,8 +22,6 @@ import java.security.*;
 
 import javax.net.ssl.*;
 
-import simpleservice.util.*;
-
 public class SimpleHttpsServer extends SimpleServer {
     public SimpleHttpsServer() {
         super("https");
@@ -48,7 +46,7 @@ public class SimpleHttpsServer extends SimpleServer {
         String keyStorePassword = "xxxxxx";
         Path   keyStorePath     = Files.createTempFile("keystore", ".jks");
         Files.delete(keyStorePath);
-        CLI.execute(
+        CliUtil.execute(
                 "keytool" +
                         " -genkeypair" +
                         " -keyalg       RSA" +

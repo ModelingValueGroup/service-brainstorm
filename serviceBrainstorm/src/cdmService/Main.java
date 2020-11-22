@@ -29,7 +29,6 @@ public class Main {
 
         server.addHandler(TokenManager.getHandler());
         server.addHandler(Api.getHandler());
-        //server.addHandler(View.getHandler());
 
         return server;
     }

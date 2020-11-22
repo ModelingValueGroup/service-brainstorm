@@ -1,0 +1,24 @@
+{
+  "case": {
+    "id": "dossier-1234567890",
+    "person": {
+      "id": "1234567890",
+      "legs": [
+        [
+          {
+            "id": "links",
+            "condition": {
+              "id": "slecht"
+            }
+          },
+          {
+            "id": "rechts",
+            "condition": {
+              "id": "redelijk"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

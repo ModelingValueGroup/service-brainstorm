@@ -38,6 +38,12 @@ public class TokenManager {
         return new Handler();
     }
 
+    public static void authorize(SimpleRequest request) {
+        if (!TokenManager.TOKEN_MANAGER.isBearer(request.headers.get("Authorization"))) {
+            throw new SimpleProblem("not authorized");
+        }
+    }
+
     private final Map<String, LocalDateTime> activeTokens = new HashMap<>();
 
     public AccessToken newToken() {
@@ -79,7 +85,7 @@ public class TokenManager {
             check(request, "client_id", CDM_CLIENT_ID);
             check(request, "client_secret", CDM_CLIENT_SECRET);
 
-            response.addToBody(new ToJson().toJson(TOKEN_MANAGER.newToken()));
+            response.addToBody(Json.toJson(TOKEN_MANAGER.newToken()));
         }
 
         private void check(SimpleRequest request, String k, String v) {
