@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="module_servicebrainstorm" default="compile.module.servicebrainstorm">
   <dirname property="module.servicebrainstorm.basedir" file="${ant.file.module_servicebrainstorm}"/>
-  
   <property name="module.jdk.home.servicebrainstorm" value="${project.jdk.home}"/>
   <property name="module.jdk.bin.servicebrainstorm" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.servicebrainstorm" value="${project.jdk.classpath}"/>
-  
   <property name="compiler.args.servicebrainstorm" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
-  
   <property name="servicebrainstorm.output.dir" value="${module.servicebrainstorm.basedir}/../out/production/serviceBrainstorm"/>
   <property name="servicebrainstorm.testoutput.dir" value="${module.servicebrainstorm.basedir}/../out/test/serviceBrainstorm"/>
-  
   <path id="servicebrainstorm.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
-  
   <path id="servicebrainstorm.module.production.classpath">
     <path refid="${module.jdk.classpath.servicebrainstorm}"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
     <path refid="library.gen:_mvgjson.classpath"/>
   </path>
-  
   <path id="servicebrainstorm.runtime.production.module.classpath">
     <pathelement location="${servicebrainstorm.output.dir}"/>
     <path refid="library.gen:_dclare.classpath"/>
     <path refid="library.gen:_immutable-collections.classpath"/>
     <path refid="library.gen:_mvgjson.classpath"/>
   </path>
-  
   <path id="servicebrainstorm.module.classpath">
     <path refid="${module.jdk.classpath.servicebrainstorm}"/>
     <pathelement location="${servicebrainstorm.output.dir}"/>
@@ -43,7 +36,6 @@
     <path refid="library.gen:_mvgjson.classpath"/>
     <path refid="library.gen:_opentest4j.classpath"/>
   </path>
-  
   <path id="servicebrainstorm.runtime.module.classpath">
     <pathelement location="${servicebrainstorm.testoutput.dir}"/>
     <pathelement location="${servicebrainstorm.output.dir}"/>
@@ -58,41 +50,32 @@
     <path refid="library.gen:_mvgjson.classpath"/>
     <path refid="library.gen:_opentest4j.classpath"/>
   </path>
-  
-  
   <patternset id="excluded.from.module.servicebrainstorm">
     <patternset refid="ignored.files"/>
   </patternset>
-  
   <patternset id="excluded.from.compilation.servicebrainstorm">
     <patternset refid="excluded.from.module.servicebrainstorm"/>
   </patternset>
-  
   <path id="servicebrainstorm.module.sourcepath">
     <dirset dir="${module.servicebrainstorm.basedir}">
       <include name="src"/>
     </dirset>
   </path>
-  
   <path id="servicebrainstorm.module.test.sourcepath">
     <dirset dir="${module.servicebrainstorm.basedir}">
       <include name="tst"/>
     </dirset>
   </path>
-  
-  
   <target name="compile.module.servicebrainstorm" depends="compile.module.servicebrainstorm.production,compile.module.servicebrainstorm.tests" description="Compile module serviceBrainstorm"/>
-  
   <target name="compile.module.servicebrainstorm.production" description="Compile module serviceBrainstorm; production classes">
     <mkdir dir="${servicebrainstorm.output.dir}"/>
-    <javac destdir="${servicebrainstorm.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servicebrainstorm}/javac">
+    <javac includeantruntime="false" destdir="${servicebrainstorm.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servicebrainstorm}/javac">
       <compilerarg line="${compiler.args.servicebrainstorm}"/>
       <bootclasspath refid="servicebrainstorm.module.bootclasspath"/>
       <classpath refid="servicebrainstorm.module.production.classpath"/>
       <src refid="servicebrainstorm.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.servicebrainstorm"/>
     </javac>
-    
     <copy todir="${servicebrainstorm.output.dir}">
       <fileset dir="${module.servicebrainstorm.basedir}/src">
         <patternset refid="compiler.resources"/>
@@ -100,17 +83,15 @@
       </fileset>
     </copy>
   </target>
-  
   <target name="compile.module.servicebrainstorm.tests" depends="compile.module.servicebrainstorm.production" description="compile module serviceBrainstorm; test classes" unless="skip.tests">
     <mkdir dir="${servicebrainstorm.testoutput.dir}"/>
-    <javac destdir="${servicebrainstorm.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servicebrainstorm}/javac">
+    <javac includeantruntime="false" destdir="${servicebrainstorm.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servicebrainstorm}/javac">
       <compilerarg line="${compiler.args.servicebrainstorm}"/>
       <bootclasspath refid="servicebrainstorm.module.bootclasspath"/>
       <classpath refid="servicebrainstorm.module.classpath"/>
       <src refid="servicebrainstorm.module.test.sourcepath"/>
       <patternset refid="excluded.from.compilation.servicebrainstorm"/>
     </javac>
-    
     <copy todir="${servicebrainstorm.testoutput.dir}">
       <fileset dir="${module.servicebrainstorm.basedir}/tst">
         <patternset refid="compiler.resources"/>
@@ -118,9 +99,37 @@
       </fileset>
     </copy>
   </target>
-  
   <target name="clean.module.servicebrainstorm" description="cleanup module">
     <delete dir="${servicebrainstorm.output.dir}"/>
     <delete dir="${servicebrainstorm.testoutput.dir}"/>
+  </target>
+  <target name="test.module.servicebrainstorm">
+    <junitlauncher haltOnFailure="true" printSummary="true">
+      <classpath refid="servicebrainstorm.runtime.module.classpath"/>
+      <testclasses outputdir=".">
+        <fileset dir="${servicebrainstorm.testoutput.dir}">
+          <include name="**/*Test.*"/>
+          <include name="**/*Tests.*"/>
+        </fileset>
+        <listener type="legacy-xml" sendSysOut="true" sendSysErr="true"/>
+        <listener type="legacy-plain" sendSysOut="true"/>
+      </testclasses>
+    </junitlauncher>
+  </target>
+  <target name="testresults.module.servicebrainstorm" depends="test.module.servicebrainstorm">
+    <mkdir dir="${basedir}/out/artifacts"/>
+    <jar destfile="${basedir}/out/artifacts/serviceBrainstorm-testresults.jar" filesetmanifest="skip">
+      <zipfileset file="${basedir}/TEST-*.xml"/>
+    </jar>
+  </target>
+  <target name="javadoc.module.servicebrainstorm">
+    <property name="servicebrainstorm.javadoc.dir" value="${basedir}/out/artifacts"/>
+    <property name="servicebrainstorm.javadoc.tmp" value="${servicebrainstorm.javadoc.dir}/tmp"/>
+    <property name="servicebrainstorm.javadoc.jar" value="${servicebrainstorm.javadoc.dir}/serviceBrainstorm-javadoc.jar"/>
+    <javadoc sourcepathref="servicebrainstorm.module.sourcepath" destdir="${servicebrainstorm.javadoc.tmp}" classpathref="servicebrainstorm.module.classpath"/>
+    <jar destfile="${servicebrainstorm.javadoc.jar}" filesetmanifest="skip">
+      <zipfileset dir="${servicebrainstorm.javadoc.tmp}"/>
+    </jar>
+    <delete dir="${servicebrainstorm.javadoc.tmp}"/>
   </target>
 </project>
