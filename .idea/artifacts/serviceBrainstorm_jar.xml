@@ -8,7 +8,6 @@
       <element id="module-output" name="serviceBrainstorm" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/immutable-collections.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/dclare.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jsonschema-generator.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

@@ -13,7 +13,7 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package template;
+package staticsInSandboxDemo;
 
 import java.lang.reflect.*;
 import java.net.*;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.opentest4j.*;
 
 @SuppressWarnings("unused")
-public class FreshStaticsTests {
+public class SandboxedStaticsTests {
     private static int n;
 
     public void test1() {
@@ -70,6 +70,7 @@ public class FreshStaticsTests {
             URL    rawLoc = getClass().getResource(klassFile);
             String file   = rawLoc.getFile();
             URL    dirLoc = file.endsWith(".class") ? new URL("file:" + file.replace(klassFile, "/")) : rawLoc;
+            System.err.println("@@@@ rawLoc of " + getClass().getName() + " = " + rawLoc + " => using " + dirLoc + " for classloader");
 
             URLClassLoader testClassLoader = new URLClassLoader(new URL[]{dirLoc}) {
                 @Override
