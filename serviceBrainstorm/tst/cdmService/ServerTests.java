@@ -15,11 +15,15 @@
 
 package cdmService;
 
+import static cdmService.TestUtils.*;
+
 import java.io.*;
+import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 
 import org.junit.jupiter.api.*;
+import org.modelingvalue.json.*;
 
 import config.*;
 
@@ -27,12 +31,12 @@ public class ServerTests {
 
     @Test
     public void configTest() {
-        String jsonConfig = "{\"http\":{\"port\":" + TestUtils.TEST_HTTP_PORT + ",\"other\":\"xyzzy\"},\"https\":{\"port\":" + TestUtils.TEST_HTTPS_PORT + ",\"other\":\"plugh\"}}";
+        String jsonConfig = "{\"http\":{\"port\":" + TEST_HTTP_PORT + ",\"other\":\"xyzzy\"},\"https\":{\"port\":" + TEST_HTTPS_PORT + ",\"other\":\"plugh\"}}";
 
         Config config = new Config(jsonConfig);
 
-        Assertions.assertEquals(TestUtils.TEST_HTTP_PORT, config.getInt(Paths.get("http/port")));
-        Assertions.assertEquals(TestUtils.TEST_HTTPS_PORT, config.getInt(Paths.get("https/port")));
+        Assertions.assertEquals(TEST_HTTP_PORT, config.getInt(Paths.get("http/port")));
+        Assertions.assertEquals(TEST_HTTPS_PORT, config.getInt(Paths.get("https/port")));
     }
 
     @Test
@@ -64,12 +68,45 @@ public class ServerTests {
         });
     }
 
+    @Test
+    public void eksampleTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\"id\":\"test\",\"person\":{\"id\":\"Wim\",\"legs\":[{\"id\":\"left\",\"condition\":{\"id\":\"problem1\"}},{\"id\":\"right\",\"condition\":{\"id\":\"problem2\"}}]}}");
+            Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
+
+            Assertions.assertEquals(2, outputMap.size());
+            Assertions.assertNotNull(outputMap.get("id"));
+            Assertions.assertEquals("test",outputMap.get("id"));
+            Assertions.assertNotNull(outputMap.get("plan"));
+            Assertions.assertTrue(Map.class.isAssignableFrom(outputMap.get("plan").getClass()));
+            Map<String, Object> plan = (Map<String, Object>) outputMap.get("plan");
+
+            Assertions.assertEquals(2, plan.size());
+            Assertions.assertNotNull(plan.get("id"));
+            Assertions.assertEquals("Case:test", plan.get("id"));
+            Assertions.assertNotNull(plan.get("treatments"));
+            Assertions.assertTrue(List.class.isAssignableFrom(plan.get("treatments").getClass()));
+            List<Object> treatments = (List<Object>) plan.get("treatments");
+
+            Assertions.assertEquals(2, treatments.size());
+            for (int i : new int[]{0, 1}) {
+                Assertions.assertTrue(Map.class.isAssignableFrom(treatments.get(i).getClass()));
+                Map<String, Object> treatment = (Map<String, Object>) treatments.get(i);
+
+                Assertions.assertEquals(1, treatment.size());
+                Assertions.assertNotNull(treatment.get("id"));
+                Assertions.assertEquals("Condition:problem"+(i+1), treatment.get("id"));
+            }
+        });
+    }
+
     //=========================================================================================================================================================
     private static CdmServer server;
 
     @BeforeAll
     public static void startServer() {
-        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":" + TestUtils.TEST_HTTP_PORT + "},\"https\":{\"port\":" + TestUtils.TEST_HTTPS_PORT + "}}");
+        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":" + TEST_HTTP_PORT + "},\"https\":{\"port\":" + TEST_HTTPS_PORT + "}}");
         server = CdmServer.create();
         server.start();
     }

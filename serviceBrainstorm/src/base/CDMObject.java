@@ -15,7 +15,7 @@
 
 package base;
 
-import org.modelingvalue.dclare.Mutable;
+import org.modelingvalue.dclare.*;
 
 public abstract class CDMObject implements Mutable {
 
@@ -25,6 +25,10 @@ public abstract class CDMObject implements Mutable {
         this.id = id;
     }
 
+    public Object getId() {
+        return id;
+    }
+
     @Override
     public int hashCode() {
         return id.hashCode();
@@ -32,8 +36,9 @@ public abstract class CDMObject implements Mutable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
+        }
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())

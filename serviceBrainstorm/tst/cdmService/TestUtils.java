@@ -51,33 +51,36 @@ public class TestUtils {
         map.put("client_id", "cdm-test");
         map.put("client_secret", "cdm-not-so-secret");
 
-        return performRequestForm2Json(url, map);
+        return performRequestForm2Json(url, false, map);
     }
 
-    private static Map<String, Object> performRequestForm2Json(URL url, Map<String, Object> map) throws IOException {
-        return performRequest2Json(url, "application/x-www-form-urlencoded", SimpleResponse.renderFormData(map).getBytes());
+    public static Map<String, Object> performRequestForm2Json(URL url, boolean bearer, Map<String, Object> map) throws IOException {
+        return performRequest2Json(url, "application/x-www-form-urlencoded", bearer, SimpleResponse.renderFormData(map).getBytes());
     }
 
-    private static Map<String, Object> performRequestJson2Json(URL url, Map<String, Object> map) throws IOException {
-        return performRequest2Json(url, "application/json", Json.toJson(map).getBytes());
+    public static Map<String, Object> performRequestJson2Json(URL url, boolean bearer, Map<String, Object> map) throws IOException {
+        return performRequest2Json(url, "application/json", bearer, Json.toJson(map).getBytes());
     }
 
-    private static Map<String, Object> performRequest2Json(URL url, String contentType, byte[] bytes) throws IOException {
-        HttpURLConnection http = (HttpURLConnection) url.openConnection();
-        http.setRequestMethod("POST");
-        http.setDoOutput(true);
-        http.setFixedLengthStreamingMode(bytes.length);
-        http.setRequestProperty("Content-Type", contentType);
-        http.connect();
-        try (OutputStream os = http.getOutputStream()) {
+    private static Map<String, Object> performRequest2Json(URL url, String contentType, boolean bearer, byte[] bytes) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setFixedLengthStreamingMode(bytes.length);
+        conn.setRequestProperty("Content-Type", contentType);
+        if (bearer) {
+            conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
+        }
+        conn.connect();
+        try (OutputStream os = conn.getOutputStream()) {
             os.write(bytes);
         }
-        try (InputStream is = http.getInputStream()) {
+        try (InputStream is = conn.getInputStream()) {
             Object ret = Json.fromJson(stream2String(is));
             //noinspection unchecked
             return ret instanceof Map<?, ?> ? (Map<String, Object>) ret : null;
         } finally {
-            http.disconnect();
+            conn.disconnect();
         }
     }
 

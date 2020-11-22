@@ -27,12 +27,13 @@ public class Api {
     //
     public static final String TOKEN_PATH     = "/token";
     public static final String API_PATH       = "/api";
-    public static final String INFO_PATH      = API_PATH + "/info";
-    public static final String VIEW_PATH_PATT = API_PATH + "/view(/.*)?";
+    public static final String INFO_PATH     = API_PATH + "/info";
+    public static final String EKSAMPLE_PATH = API_PATH + "/service/eksample";
     //
-    public static final String API_ENDPOINT   = BASE_URL + API_PATH;
+    public static final String API_ENDPOINT  = BASE_URL + API_PATH;
     public static final String TOKEN_ENDPOINT = BASE_URL + TOKEN_PATH;
-    public static final String INFO_ENDPOINT  = BASE_URL + INFO_PATH;
+    public static final String INFO_ENDPOINT = BASE_URL + INFO_PATH;
+    public static final String A_ENDPOINT    = BASE_URL + EKSAMPLE_PATH;
 
     public static class ApiInfo {
         public final String apiName       = "cdm";

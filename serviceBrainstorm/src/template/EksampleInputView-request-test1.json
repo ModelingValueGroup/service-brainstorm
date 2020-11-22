@@ -1,0 +1,20 @@
+{
+  "id": "test",
+  "person": {
+    "id": "Wim",
+    "legs": [
+      {
+        "id": "left",
+        "condition": {
+          "id": "problem1"
+        }
+      },
+      {
+        "id": "right",
+        "condition": {
+          "id": "problem2"
+        }
+      }
+    ]
+  }
+}

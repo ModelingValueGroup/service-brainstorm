@@ -23,6 +23,7 @@ public class CdmServer extends SimpleDualServer {
 
         server.addHandler(TokenManager.getHandler());
         server.addHandler(Api.getHandler());
+        server.addHandler(EksampleService.getHandler());
 
         return server;
     }
