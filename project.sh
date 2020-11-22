@@ -23,7 +23,7 @@
 #       s = sources
 #       t = test
 #===================================================================
-version="1.0.0"
+version="1.0.1"
 artifacts=(
   "org.modelingvalue   service-brainstorm      $version    jar jds"
 )
