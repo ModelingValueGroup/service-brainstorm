@@ -15,21 +15,13 @@
 
 package cdmService;
 
-import simpleservice.*;
+import config.*;
 
 public class Main {
     public static void main(String... args) {
-        SimpleDualServer server = makeServer();
+        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":876},\"https\":{\"port\":456}}");
+        CdmServer server = CdmServer.create();
         server.start();
         server.waitForDone();
-    }
-
-    public static SimpleDualServer makeServer() {
-        SimpleDualServer server = new SimpleDualServer(11080,11443);
-
-        server.addHandler(TokenManager.getHandler());
-        server.addHandler(Api.getHandler());
-
-        return server;
     }
 }

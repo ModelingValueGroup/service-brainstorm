@@ -27,11 +27,6 @@ public class SimpleHttpsServer extends SimpleServer {
         super("https");
     }
 
-    @SuppressWarnings("unused")
-    public SimpleHttpsServer(int port) {
-        super("https", port);
-    }
-
     protected ServerSocket makeServerSocket(InetSocketAddress address) throws IOException, GeneralSecurityException {
         return getSslServerSocketFactory().createServerSocket(address.getPort(), 0, address.getAddress());
     }

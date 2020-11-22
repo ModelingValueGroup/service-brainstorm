@@ -24,6 +24,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
+import config.*;
+
 public abstract class SimpleServer {
     public static final Charset             ENCODING    = StandardCharsets.UTF_8;
     public static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
@@ -127,7 +129,7 @@ public abstract class SimpleServer {
     protected static int getDefaultPort(String protocol) {
         String url = protocol + "://a.b";
         try {
-            return new URL(url).getDefaultPort();
+            return Config.get().getInt(protocol + "/port", new URL(url).getDefaultPort());
         } catch (MalformedURLException e) {
             throw new Error("could not determine default port for " + url, e);
         }

@@ -109,7 +109,7 @@ public class SimpleRequest {
             writer.write("HTTP/1.1 100 Continue\r\n\r\n");
             writer.flush();
         }
-        switch (contentType) {
+        switch (contentType == null ? "" : contentType) {
         case CONTENT_TYPE_FORM_DATA:
             formData = readFormData();
             break;

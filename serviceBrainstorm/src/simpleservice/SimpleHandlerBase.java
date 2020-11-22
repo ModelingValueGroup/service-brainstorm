@@ -46,10 +46,7 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
     }
 
     public boolean isMatch(SimpleRequest r) {
-        boolean pathMatches   = getPathPattern() == null || r.path.matches(getPathPattern());
-        boolean methodMatches = getMethodPattern() == null || r.method.matches(getMethodPattern());
-        System.err.println("@@@ " + this.getClass().getName() + " " + r.method + "/" + r.path + " : " + methodMatches + "/" + pathMatches);
-        return pathMatches && methodMatches;
+        return (getPathPattern() == null || r.path.matches(getPathPattern())) && (getMethodPattern() == null || r.method.matches(getMethodPattern()));
     }
 
     public int compareTo(SimpleHandler o) {

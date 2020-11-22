@@ -28,7 +28,9 @@ import simpleservice.*;
 
 @SuppressWarnings("unused")
 public class TestUtils {
-    private static String recycleToken;
+    public static final int    TEST_HTTP_PORT  = 11080;
+    public static final int    TEST_HTTPS_PORT = 11443;
+    private static      String recycleToken;
 
     static String getFreshToken() throws IOException {
         return getFreshTokenMap().get("access_token").toString();
@@ -42,7 +44,7 @@ public class TestUtils {
     }
 
     static Map<String, Object> getFreshTokenMap() throws IOException {
-        URL                 url = new URL("http://localhost" + Api.TOKEN_PATH);
+        URL                 url = makeTestUrl(Api.TOKEN_PATH);
         Map<String, Object> map = new HashMap<>();
         map.put("grant_type", "client_credentials");
         map.put("scope", "cdm-api");
@@ -81,12 +83,16 @@ public class TestUtils {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> apiCall(String path) throws IOException {
-        URLConnection conn = new URL("http://localhost" + path).openConnection();
+        URLConnection conn = makeTestUrl(path).openConnection();
         conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
         String text   = stream2String((InputStream) conn.getContent());
         Object answer = Json.fromJson(text);
         Assertions.assertTrue(answer instanceof Map);
         return (Map<String, Object>) answer;
+    }
+
+    public static URL makeTestUrl(String path) throws MalformedURLException {
+        return new URL("http://localhost:" + TEST_HTTP_PORT + path);
     }
 
     static String stream2String(InputStream content) throws IOException {

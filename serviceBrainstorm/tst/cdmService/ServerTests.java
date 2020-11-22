@@ -16,19 +16,28 @@
 package cdmService;
 
 import java.io.*;
-import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 
 import org.junit.jupiter.api.*;
 
-import simpleservice.*;
+import config.*;
 
 public class ServerTests {
+
+    @Test
+    public void configTest() {
+        String jsonConfig = "{\"http\":{\"port\":" + TestUtils.TEST_HTTP_PORT + ",\"other\":\"xyzzy\"},\"https\":{\"port\":" + TestUtils.TEST_HTTPS_PORT + ",\"other\":\"plugh\"}}";
+
+        Config config = new Config(jsonConfig);
+
+        Assertions.assertEquals(TestUtils.TEST_HTTP_PORT, config.getInt(Paths.get("http/port")));
+        Assertions.assertEquals(TestUtils.TEST_HTTPS_PORT, config.getInt(Paths.get("https/port")));
+    }
+
     @Test
     public void unknownEntrypoint() {
-        Assertions.assertThrows(IOException.class, () -> {
-            new URL("http://localhost/bla/bla").getContent();
-        });
+        Assertions.assertThrows(IOException.class, () -> TestUtils.makeTestUrl("/bla/bla").getContent());
     }
 
     @Test
@@ -55,20 +64,13 @@ public class ServerTests {
         });
     }
 
-    @Test
-    public void apiViewTest() {
-        Assertions.assertDoesNotThrow(() -> {
-            Map<String, Object> map = TestUtils.apiCall(Api.API_PATH+"/view");
-            Assertions.assertEquals(2, map.size());
-        });
-    }
-
     //=========================================================================================================================================================
-    private static SimpleDualServer server;
+    private static CdmServer server;
 
     @BeforeAll
     public static void startServer() {
-        server = Main.makeServer();
+        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":" + TestUtils.TEST_HTTP_PORT + "},\"https\":{\"port\":" + TestUtils.TEST_HTTPS_PORT + "}}");
+        server = CdmServer.create();
         server.start();
     }
 

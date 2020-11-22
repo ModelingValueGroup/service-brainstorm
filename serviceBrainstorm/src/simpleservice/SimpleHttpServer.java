@@ -23,11 +23,6 @@ public class SimpleHttpServer extends SimpleServer {
         super("http");
     }
 
-    @SuppressWarnings("unused")
-    public SimpleHttpServer(int port) {
-        super("http", port);
-    }
-
     @Override
     protected ServerSocket makeServerSocket(InetSocketAddress address) throws IOException {
         return new ServerSocket(address.getPort(), 0, address.getAddress());
