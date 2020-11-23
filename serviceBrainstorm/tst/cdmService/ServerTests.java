@@ -15,17 +15,23 @@
 
 package cdmService;
 
-import static cdmService.TestUtils.*;
+import static cdmService.TestUtils.TEST_HTTPS_PORT;
+import static cdmService.TestUtils.TEST_HTTP_PORT;
+import static cdmService.TestUtils.makeTestUrl;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.jupiter.api.*;
-import org.modelingvalue.json.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.modelingvalue.json.Json;
 
-import config.*;
+import config.Config;
 
 public class ServerTests {
 
@@ -68,30 +74,12 @@ public class ServerTests {
         });
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void eksampleTest1() {
         Assertions.assertDoesNotThrow(() -> {
             URL url = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
-                    "  \"id\": \"test\",\n" +
-                    "  \"person\": {\n" +
-                    "    \"id\": \"Wim\",\n" +
-                    "    \"legs\": [\n" +
-                    "      {\n" +
-                    "        \"id\": \"left\",\n" +
-                    "        \"condition\": {\n" +
-                    "          \"id\": \"problem1\"\n" +
-                    "        }\n" +
-                    "      },\n" +
-                    "      {\n" +
-                    "        \"id\": \"right\",\n" +
-                    "        \"condition\": {\n" +
-                    "          \"id\": \"problem2\"\n" +
-                    "        }\n" +
-                    "      }\n" +
-                    "    ]\n" +
-                    "  }\n" +
-                    "}");
+            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\",\n" + "        \"condition\": {\n" + "          \"id\": \"problem1\"\n" + "        }\n" + "      },\n" + "      {\n" + "        \"id\": \"right\",\n" + "        \"condition\": {\n" + "          \"id\": \"problem2\"\n" + "        }\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
             Assertions.assertEquals(2, outputMap.size());
@@ -120,24 +108,12 @@ public class ServerTests {
         });
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void eksampleTest2() {
         Assertions.assertDoesNotThrow(() -> {
             URL url = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
-                    "  \"id\": \"test\",\n" +
-                    "  \"person\": {\n" +
-                    "    \"id\": \"Wim\",\n" +
-                    "    \"legs\": [\n" +
-                    "      {\n" +
-                    "        \"id\": \"left\"\n" +
-                    "      },\n" +
-                    "      {\n" +
-                    "        \"id\": \"right\"\n" +
-                    "      }\n" +
-                    "    ]\n" +
-                    "  }\n" +
-                    "}");
+            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
             Assertions.assertEquals(1, outputMap.size());

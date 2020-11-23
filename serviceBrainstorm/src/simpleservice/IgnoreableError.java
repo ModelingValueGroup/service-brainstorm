@@ -16,6 +16,9 @@
 package simpleservice;
 
 public class IgnoreableError extends Error {
+
+    private static final long serialVersionUID = 5480840133341247329L;
+
     public IgnoreableError(String message) {
         super(message);
     }

@@ -15,22 +15,30 @@
 
 package cdmService;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.stream.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.*;
-import org.modelingvalue.json.*;
+import org.junit.jupiter.api.Assertions;
+import org.modelingvalue.json.Json;
 
-import simpleservice.*;
+import simpleservice.SimpleResponse;
 
 @SuppressWarnings("unused")
 public class TestUtils {
-    public static final int    TEST_HTTP_PORT  = 11080;
-    public static final int    TEST_HTTPS_PORT = 11443;
-    private static      String recycleToken;
+    public static final int TEST_HTTP_PORT  = 11080;
+    public static final int TEST_HTTPS_PORT = 11443;
+    private static String   recycleToken;
 
     static String getFreshToken() throws IOException {
         return getFreshTokenMap().get("access_token").toString();
@@ -44,7 +52,7 @@ public class TestUtils {
     }
 
     static Map<String, Object> getFreshTokenMap() throws IOException {
-        URL                 url = makeTestUrl(Api.TOKEN_PATH);
+        URL url = makeTestUrl(Api.TOKEN_PATH);
         Map<String, Object> map = new HashMap<>();
         map.put("grant_type", "client_credentials");
         map.put("scope", "cdm-api");
@@ -62,6 +70,7 @@ public class TestUtils {
         return performRequest2Json(url, "application/json", bearer, Json.toJson(map).getBytes());
     }
 
+    @SuppressWarnings("unchecked")
     private static Map<String, Object> performRequest2Json(URL url, String contentType, boolean bearer, byte[] bytes) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -88,7 +97,7 @@ public class TestUtils {
     public static Map<String, Object> apiCall(String path) throws IOException {
         URLConnection conn = makeTestUrl(path).openConnection();
         conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
-        String text   = stream2String((InputStream) conn.getContent());
+        String text = stream2String((InputStream) conn.getContent());
         Object answer = Json.fromJson(text);
         Assertions.assertTrue(answer instanceof Map);
         return (Map<String, Object>) answer;

@@ -15,29 +15,38 @@
 
 package simpleservice;
 
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.security.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.stream.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-import config.*;
+import config.Config;
 
 public abstract class SimpleServer {
-    public static final Charset             ENCODING    = StandardCharsets.UTF_8;
-    public static final ThreadPoolExecutor  THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
+    public static final Charset            ENCODING    = StandardCharsets.UTF_8;
+    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
     //
-    private final        String              protocol;
-    private final        InetSocketAddress   address;
-    private final        ServerSocket        serverSocket;
-    private final        List<SimpleHandler> handlers    = new ArrayList<>();
-    private              boolean             stop;
+    private final String                   protocol;
+    private final InetSocketAddress        address;
+    private final ServerSocket             serverSocket;
+    private final List<SimpleHandler>      handlers    = new ArrayList<>();
+    private boolean                        stop;
 
     public SimpleServer(String protocol) {
-        this(protocol,getDefaultPort(protocol));
+        this(protocol, getDefaultPort(protocol));
     }
 
     public SimpleServer(String protocol, int port) {
@@ -46,7 +55,6 @@ public abstract class SimpleServer {
         serverSocket = makeServerSocketUnchecked(address);
     }
 
-    @SuppressWarnings("BusyWait")
     public static void waitForDone() {
         while (0 < THREAD_POOL.getActiveCount()) {
             try {
@@ -106,8 +114,8 @@ public abstract class SimpleServer {
     private void handle(Socket socket) {
         System.out.println(">>> handling " + getProtocol() + " request....");
         try (socket) {
-            SimpleRequest  request  = new SimpleRequest(socket, ENCODING);
-            SimpleHandler  handler  = determineHandler(request);
+            SimpleRequest request = new SimpleRequest(socket, ENCODING);
+            SimpleHandler handler = determineHandler(request);
             SimpleResponse response = new SimpleResponse(request, handler);
             request.trace();
             response.handle();
@@ -143,6 +151,7 @@ public abstract class SimpleServer {
             namePrefix = "SimpleServer-";
         }
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r, namePrefix + threadNumber.getAndIncrement());
             t.setDaemon(true);

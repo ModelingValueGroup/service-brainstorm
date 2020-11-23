@@ -15,12 +15,14 @@
 
 package config;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.modelingvalue.json.*;
+import org.modelingvalue.json.FromJson;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -36,11 +38,7 @@ public class Config {
     }
 
     public static Config get(String[] args) throws IOException {
-        return args == null || args.length == 0
-                ? new Config(Paths.get("config"))
-                : args[0].startsWith("{")
-                ? new Config(args[0])
-                : new Config(Paths.get(args[0]));
+        return args == null || args.length == 0 ? new Config(Paths.get("config")) : args[0].startsWith("{") ? new Config(args[0]) : new Config(Paths.get(args[0]));
 
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +49,7 @@ public class Config {
         this(String.join("\n", Files.readAllLines(configfile)));
     }
 
+    @SuppressWarnings("unchecked")
     public Config(String configJson) {
         Object o = FromJson.fromJson(configJson);
         if (!(o instanceof Map<?, ?>)) {
@@ -64,6 +63,7 @@ public class Config {
         return get(path, null);
     }
 
+    @SuppressWarnings("unchecked")
     public Object get(Path path, Object def) {
         AtomicReference<Object> cur = new AtomicReference<>(config);
         for (Path p : path) {

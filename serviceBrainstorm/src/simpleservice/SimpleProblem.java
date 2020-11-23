@@ -16,9 +16,13 @@
 package simpleservice;
 
 public class SimpleProblem extends Error {
+
+    private static final long serialVersionUID = -6311758833302428448L;
+
     public SimpleProblem() {
         super("resistance is futile");
     }
+
     public SimpleProblem(String message) {
         super(message);
     }
