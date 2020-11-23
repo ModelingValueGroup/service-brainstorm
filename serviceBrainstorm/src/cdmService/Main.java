@@ -19,7 +19,7 @@ import config.*;
 
 public class Main {
     public static void main(String... args) {
-        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":876},\"https\":{\"port\":456}}");
+        System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":80},\"https\":{\"port\":443}}");
         CdmServer server = CdmServer.create();
         server.start();
         server.waitForDone();
