@@ -18,6 +18,7 @@ package fakeAvolaReplace;
 import java.util.*;
 
 import simpleservice.*;
+import simpleservice.SimpleBody.*;
 
 public class Main {
     //    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
@@ -32,10 +33,10 @@ public class Main {
     public static void main(String... args) {
         SimpleDualServer server = new SimpleDualServer();
 
-        server.addHandler(new ConnectTokenHandler()/**/.with("POST"/**/, "/connect/token"));
-        server.addHandler(new ApiSettingsHandler()/* */.with("GET"/* */, "/api/Settings"));
-        server.addHandler(new DecisionListHandler()/**/.with("GET"/* */, "/api/ApiExecution/decisions/list"));
-        server.addHandler(new ExecuteHandler()/*     */.with("POST"/**/, "/api/ApiExecution/execute"));
+        server.addHandler(new ConnectTokenHandler()/**/.with("POST"/**/, "/connect/token",LinesBody.class));
+        server.addHandler(new ApiSettingsHandler()/* */.with("GET"/* */, "/api/Settings", LinesBody.class));
+        server.addHandler(new DecisionListHandler()/**/.with("GET"/* */, "/api/ApiExecution/decisions/list", LinesBody.class));
+        server.addHandler(new ExecuteHandler()/*     */.with("POST"/**/, "/api/ApiExecution/execute", LinesBody.class));
 
         server.addHandler(new DefaultHandler());
 
@@ -43,7 +44,7 @@ public class Main {
         server.waitForDone();
     }
 
-    public static class ConnectTokenHandler extends HandlerBase {
+    public static class ConnectTokenHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
             Map<String, String> map = new HashMap<>();
@@ -54,7 +55,7 @@ public class Main {
         }
     }
 
-    public static class ApiSettingsHandler extends HandlerBase {
+    public static class ApiSettingsHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
             Map<String, String> map = new HashMap<>();
@@ -70,21 +71,21 @@ public class Main {
 
     }
 
-    public static class DecisionListHandler extends HandlerBase {
+    public static class DecisionListHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
             response.addToBody( readResource("decision-list.json"));
         }
     }
 
-    public static class ExecuteHandler extends HandlerBase {
+    public static class ExecuteHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
             response.addToBody( readResource("execute.json"));
         }
     }
 
-    public static class DefaultHandler extends HandlerBase {
+    public static class DefaultHandler extends HandlerBase<LinesBody> {
         public void handle(SimpleRequest request, SimpleResponse response) {
             response.addToBody( Arrays.asList("{", "   'error': 'resistence is futile'", "}"));
         }

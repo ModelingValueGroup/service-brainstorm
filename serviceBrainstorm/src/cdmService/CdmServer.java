@@ -25,6 +25,8 @@ public class CdmServer extends SimpleDualServer {
         server.addHandler(Api.getHandler());
         server.addHandler(EksampleService.getHandler());
 
+        server.addBodyMaker(SimpleServer.CONTENT_TYPE_JSON, JsonICBody::new);
+
         return server;
     }
 }

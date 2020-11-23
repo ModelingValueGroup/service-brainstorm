@@ -86,7 +86,6 @@ public class TestUtils {
         }
         try (InputStream is = conn.getInputStream()) {
             Object ret = Json.fromJson(stream2String(is));
-            //noinspection unchecked
             return ret instanceof Map<?, ?> ? (Map<String, Object>) ret : null;
         } finally {
             conn.disconnect();

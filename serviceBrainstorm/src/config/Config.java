@@ -55,7 +55,6 @@ public class Config {
         if (!(o instanceof Map<?, ?>)) {
             throw new Error("config must be a json file with map as top element, but is is a " + (o == null ? "<null>" : o.getClass().getName()));
         }
-        //noinspection unchecked
         config = (Map<String, Object>) o;
     }
 
@@ -67,7 +66,6 @@ public class Config {
     public Object get(Path path, Object def) {
         AtomicReference<Object> cur = new AtomicReference<>(config);
         for (Path p : path) {
-            //noinspection unchecked
             cur.getAndUpdate(c -> c instanceof Map<?, ?> ? ((Map<String, Object>) c).get(p.toString()) : def);
         }
         return cur.get();

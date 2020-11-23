@@ -22,6 +22,7 @@ import java.util.stream.*;
 
 import org.modelingvalue.json.*;
 
+import simpleservice.SimpleBody.*;
 import simpleservice.*;
 
 /*
@@ -34,7 +35,7 @@ public class TokenManager {
 
     public static final TokenManager TOKEN_MANAGER = new TokenManager();
 
-    public static HandlerBase getHandler() {
+    public static Handler getHandler() {
         return new Handler();
     }
 
@@ -63,7 +64,7 @@ public class TokenManager {
     }
 
     public boolean isBearer(String authorization) {
-        return authorization!=null && authorization.startsWith("Bearer ") && isValid(authorization.replaceFirst("^Bearer ", ""));
+        return authorization != null && authorization.startsWith("Bearer ") && isValid(authorization.replaceFirst("^Bearer ", ""));
     }
 
     @SuppressWarnings("unused")
@@ -73,23 +74,24 @@ public class TokenManager {
         public final String token_type   = "Bearer";
     }
 
-    private static class Handler extends HandlerBase {
+    private static class Handler extends HandlerBase<FormDataBody> {
         public Handler() {
-            super("POST", Api.TOKEN_PATH);
+            super("POST", Api.TOKEN_PATH, FormDataBody.class);
         }
 
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            check(request, "grant_type", "client_credentials");
-            check(request, "scope", CDM_SCOPE);
-            check(request, "client_id", CDM_CLIENT_ID);
-            check(request, "client_secret", CDM_CLIENT_SECRET);
+            Map<String, String> formData = castBody(request.getBody()).formData;
+            check(formData, "grant_type", "client_credentials");
+            check(formData, "scope", CDM_SCOPE);
+            check(formData, "client_id", CDM_CLIENT_ID);
+            check(formData, "client_secret", CDM_CLIENT_SECRET);
 
             response.addToBody(Json.toJson(TOKEN_MANAGER.newToken()));
         }
 
-        private void check(SimpleRequest request, String k, String v) {
-            if (!v.equals(request.formData.get(k))) {
+        private void check(Map<String, String> formData, String k, String v) {
+            if (!v.equals(formData.get(k))) {
                 throw new SimpleProblem("bad " + k);
             }
         }

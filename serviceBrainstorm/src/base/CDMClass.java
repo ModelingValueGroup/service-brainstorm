@@ -30,7 +30,7 @@ public class CDMClass<C extends CDMObject> implements MutableClass {
 
     @SafeVarargs
     public static <T extends CDMObject> CDMClass<T> of(Class<T> cls, CDMProperty<T, ?>... properties) {
-        return new CDMClass<T>(cls, Collection.of(properties).toSet());
+        return new CDMClass<>(cls, Collection.of(properties).toSet());
     }
 
     private CDMClass(Class<C> cls, Set<CDMProperty<C, ?>> properties) {
@@ -50,10 +50,12 @@ public class CDMClass<C extends CDMObject> implements MutableClass {
         return setables;
     }
 
+    @SuppressWarnings("unused")
     public Set<CDMProperty<C, ?>> properties() {
         return properties;
     }
 
+    @SuppressWarnings("unused")
     public Class<C> cls() {
         return cls;
     }

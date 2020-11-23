@@ -26,7 +26,7 @@ import base.CDMProperty;
 public class Plan extends CDMObject {
 
     public static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true,                          //
-            p -> Person.LEGS.get(Case.PERSON.get((Case) cdmUniverse())).map(l -> Leg.CONDITION.get(l)).notNull().map(Treatment::new).toList());
+            p -> Person.LEGS.get(Case.PERSON.get((Case) cdmUniverse())).map(Leg.CONDITION::get).notNull().map(Treatment::new).toList());
 
     private static final CDMClass<Plan>                    D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
 

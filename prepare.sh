@@ -47,6 +47,8 @@ echo "## get dependencies from maven..."
     mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=javadoc || :
     mvn dependency:copy-dependencies -Dmdep.stripVersion=true -DoutputDirectory=lib -Dclassifier=sources || :
 ) > /tmp/prepare.log
+
+echo "## get branch based build dependencies..."
 (   getAllDependencies "$GITHUB_TOKEN" 2>&1 \
         | fgrep -v --line-buffered 'could not download artifact: org.modelingvalue:' \
         | fgrep -v --line-buffered 'missing dependency org.modelingvalue:' \

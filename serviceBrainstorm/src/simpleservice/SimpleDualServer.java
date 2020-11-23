@@ -15,6 +15,8 @@
 
 package simpleservice;
 
+import java.util.function.*;
+
 public class SimpleDualServer {
     private final SimpleHttpServer  httpServer;
     private final SimpleHttpsServer httpsServer;
@@ -27,6 +29,11 @@ public class SimpleDualServer {
     public void addHandler(SimpleHandler handler) {
         httpServer.addHandler(handler);
         httpsServer.addHandler(handler);
+    }
+
+    public void addBodyMaker(String contentType, Function<SimpleRequest, SimpleBody> bodyMaker) {
+        httpServer.addBodyMaker(contentType, bodyMaker);
+        httpsServer.addBodyMaker(contentType, bodyMaker);
     }
 
     public void start() {

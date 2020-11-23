@@ -13,60 +13,51 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-package template;
+package template.views;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
+import org.modelingvalue.collections.*;
 
-import org.modelingvalue.collections.List;
+import base.views.*;
+import template.*;
 
 @SuppressWarnings("unchecked")
-public class EksampleInputView {
+public class EksampleInputView extends CDMView {
     public void augment(Case x, Map<String, Object> map) {
         Case.PERSON.set(x, makePerson((Map<String, Object>) map.get("person")));
         /// x.setPlan(...); // not in view
     }
 
     private Person makePerson(Map<String, Object> map) {
-        Person x = new Person(map.computeIfAbsent("id", k -> newPersonId()));
-        Person.LEGS.set(x, makeLegs((java.util.List<Object>) map.get("legs")));
+        if (map == null) {
+            return null;
+        }
+        Person x = new Person(map.get("id"));
+        Person.LEGS.set(x, makeLegs((List<Object>) map.get("legs")));
+        // no more in view
         return x;
     }
 
-    private List<Leg> makeLegs(java.util.List<Object> list) {
-        List<Leg> x = List.of();
-        if (list != null) {
-            x = List.of(list.stream().map(m -> makeLeg((Map<String, Object>) m)).collect(Collectors.toList()));
-        }
-        return x;
+    private List<Leg> makeLegs(List<Object> list) {
+        return list == null ? List.of() : list.map(m -> makeLeg((Map<String, Object>) m)).toList();
     }
 
     private Leg makeLeg(Map<String, Object> map) {
-        Leg x = new Leg(map.computeIfAbsent("id", k -> newLegId()));
-        Leg.CONDITION.set(x, makeCondition((java.util.Map<String, Object>) map.get("condition")));
+        if (map == null) {
+            return null;
+        }
+        Leg x = new Leg(map.get("id"));
+        Leg.CONDITION.set(x, makeCondition((Map<String, Object>) map.get("condition")));
         // no more in view
         return x;
     }
 
     private Condition makeCondition(Map<String, Object> map) {
-        Condition x = null;
-        if (map != null) {
-            x = new Condition(map.computeIfAbsent("id", k -> newConditionId()));
-            // nothing in view
+        if (map == null) {
+            return null;
         }
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        Condition x = new Condition(map.get("id"));
+        // nothing in view
         return x;
-    }
-
-    private Object newPersonId() {
-        return String.format("person-%09d", new Random().nextInt());
-    }
-
-    private Object newLegId() {
-        return String.format("leg-%09d", new Random().nextInt());
-    }
-
-    private Object newConditionId() {
-        return String.format("condition-%09d", new Random().nextInt());
     }
 }

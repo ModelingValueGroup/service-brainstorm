@@ -15,19 +15,18 @@
 
 package fakeAvolaReplace;
 
-import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
 import simpleservice.*;
 
-public abstract class HandlerBase extends SimpleHandlerBase {
+public abstract class HandlerBase<BODY extends SimpleBody> extends SimpleHandlerBase<BODY> {
     public HandlerBase() {
     }
 
-    public HandlerBase(String methodPattern, String pathPattern) {
-        super(methodPattern, pathPattern);
-    }
+//    public HandlerBase(String methodPattern, String pathPattern) {
+//        super(methodPattern, pathPattern);
+//    }
 
     public static List<String> smartConcat(Object... args) {
         List<String> l = new ArrayList<>();
@@ -51,17 +50,4 @@ public abstract class HandlerBase extends SimpleHandlerBase {
         return l;
     }
 
-    public static List<String> readResource(String name) {
-        List<String> l        = new ArrayList<>();
-        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                l.add(line);
-            }
-        } catch (IOException e) {
-            throw new Error("problem reading " + name, e);
-        }
-        return l;
-    }
 }

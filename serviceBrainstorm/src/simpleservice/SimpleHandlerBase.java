@@ -15,24 +15,35 @@
 
 package simpleservice;
 
+import java.io.*;
 import java.util.*;
 
-public abstract class SimpleHandlerBase implements SimpleHandler {
-    protected String methodPattern;
-    protected String pathPattern;
+import fakeAvolaReplace.*;
+
+public abstract class SimpleHandlerBase<BODY extends SimpleBody> implements SimpleHandler {
+    protected String      methodPattern;
+    protected String      pathPattern;
+    protected Class<BODY> bodyClass;
 
     public SimpleHandlerBase() {
     }
 
-    public SimpleHandlerBase(String methodPattern, String pathPattern) {
+    public SimpleHandlerBase(String methodPattern, String pathPattern, Class<BODY> bodyClass) {
         this.methodPattern = methodPattern;
         this.pathPattern = pathPattern;
+        this.bodyClass = bodyClass;
     }
 
-    public SimpleHandlerBase with(String methodPattern, String pathPattern) {
+    public SimpleHandlerBase<BODY> with(String methodPattern, String pathPattern, Class<BODY> bodyClass) {
         this.methodPattern = methodPattern;
         this.pathPattern = pathPattern;
+        this.bodyClass = bodyClass;
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public BODY castBody(SimpleBody body) {
+        return (BODY) body;
     }
 
     @Override
@@ -46,7 +57,9 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
     }
 
     public boolean isMatch(SimpleRequest r) {
-        return (getPathPattern() == null || r.path.matches(getPathPattern())) && (getMethodPattern() == null || r.method.matches(getMethodPattern()));
+        return (getPathPattern() == null || r.path.matches(getPathPattern()))
+                && (getMethodPattern() == null || r.method.matches(getMethodPattern()))
+                && (bodyClass == null || bodyClass.isAssignableFrom(r.getBody().getClass()));
     }
 
     public int compareTo(SimpleHandler o) {
@@ -55,5 +68,19 @@ public abstract class SimpleHandlerBase implements SimpleHandler {
         Comparator<SimpleHandler> p             = Comparator.comparing(SimpleHandler::getPathPattern, keyComparator);
 
         return m.thenComparing(p).compare(this, o);
+    }
+
+    public static List<String> readResource(String name) {
+        List<String> l        = new ArrayList<>();
+        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                l.add(line);
+            }
+        } catch (IOException e) {
+            throw new Error("problem reading " + name, e);
+        }
+        return l;
     }
 }

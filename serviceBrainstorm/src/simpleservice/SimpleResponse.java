@@ -25,20 +25,23 @@ import java.util.stream.*;
 
 public class SimpleResponse {
     private final SimpleRequest       request;
-    private final SimpleHandler       handler;
+    private       SimpleHandler       handler;
     //
     private       int                 responseCode = 200;
     private       String              responseName = "OK";
     private final Map<String, Object> headers      = new HashMap<>();
     private final List<String>        body         = new ArrayList<>();
 
-    public SimpleResponse(SimpleRequest request, SimpleHandler handler) {
+    public SimpleResponse(SimpleRequest request) {
         this.request = request;
+    }
+
+    public void setHandler(SimpleHandler handler) {
         this.handler = handler;
-        headers.put("Content-Type", "text/plain; charset=" + SimpleServer.ENCODING.displayName());
     }
 
     public void handle() throws IOException {
+        headers.put("Content-Type", "text/plain; charset=" + SimpleServer.ENCODING.displayName());
         try {
             if (handler == null) {
                 throw new SimpleProblem();
@@ -141,5 +144,4 @@ public class SimpleResponse {
                 });
         return result.toString();
     }
-
 }

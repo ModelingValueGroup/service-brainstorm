@@ -44,9 +44,7 @@ public abstract class CDMObject implements Mutable {
         if (getClass() != obj.getClass())
             return false;
         CDMObject other = (CDMObject) obj;
-        if (!id.equals(other.id))
-            return false;
-        return true;
+        return id.equals(other.id);
     }
 
     @Override

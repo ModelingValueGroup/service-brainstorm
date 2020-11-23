@@ -20,7 +20,7 @@ public interface SimpleHandler extends Comparable<SimpleHandler> {
 
     String getPathPattern();
 
-    void handle(SimpleRequest request,SimpleResponse response);
+    void handle(SimpleRequest request, SimpleResponse response);
 
     boolean isMatch(SimpleRequest request);
 }

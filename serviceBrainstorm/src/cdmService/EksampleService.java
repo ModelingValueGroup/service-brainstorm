@@ -15,17 +15,18 @@
 
 package cdmService;
 
-import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import org.modelingvalue.collections.*;
 import org.modelingvalue.json.*;
 
 import base.*;
 import simpleservice.*;
 import template.*;
+import template.views.*;
 
 public class EksampleService {
-    public static HandlerBase getHandler() {
+    public static Handler getHandler() {
         return new EksampleService.Handler();
     }
 
@@ -41,16 +42,15 @@ public class EksampleService {
         return result.get();
     }
 
-    public static class Handler extends HandlerBase {
+    public static class Handler extends HandlerBase<JsonICBody> {
         public Handler() {
-            super("(GET|POST)", Api.EKSAMPLE_PATH);
+            super("(GET|POST)", Api.EKSAMPLE_PATH, JsonICBody.class);
         }
 
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
             TokenManager.authorize(request);
-            @SuppressWarnings("unchecked")
-            Object o = new EksampleService().handle((Map<String, Object>) request.jsonData);
+            Object o = new EksampleService().handle(castBody(request.getBody()).jsonData);
             response.addToBody(Json.toJson(o));
         }
     }

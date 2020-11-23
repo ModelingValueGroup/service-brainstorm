@@ -37,8 +37,8 @@ public class CliUtil {
     }
 
     private static class Slurp extends Thread {
-        private BufferedReader buf;
-        private StringBuilder  b = new StringBuilder();
+        private final BufferedReader buf;
+        private final StringBuilder  b = new StringBuilder();
 
         public Slurp(InputStream is) {
             buf = new BufferedReader(new InputStreamReader(is));

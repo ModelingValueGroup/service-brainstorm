@@ -15,30 +15,10 @@
 
 package cdmService;
 
-import java.io.*;
-import java.util.*;
-
 import simpleservice.*;
 
-public abstract class HandlerBase extends SimpleHandlerBase {
-    public HandlerBase() {
-    }
-
-    public HandlerBase(String methodPattern, String pathPattern) {
-        super(methodPattern, pathPattern);
-    }
-
-    public static List<String> readResource(String name) {
-        List<String> l        = new ArrayList<>();
-        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                l.add(line);
-            }
-        } catch (IOException e) {
-            throw new Error("problem reading " + name, e);
-        }
-        return l;
+public abstract class HandlerBase<BODY extends SimpleBody> extends SimpleHandlerBase<BODY> {
+    public HandlerBase(String methodPattern, String pathPattern, Class<BODY> bodyClass) {
+        super(methodPattern, pathPattern, bodyClass);
     }
 }

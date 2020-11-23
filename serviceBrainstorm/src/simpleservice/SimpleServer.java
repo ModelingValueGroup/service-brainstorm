@@ -15,35 +15,35 @@
 
 package simpleservice;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.security.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+import java.util.stream.*;
 
-import config.Config;
+import javax.net.ssl.*;
+
+import config.*;
+import simpleservice.SimpleBody.*;
 
 public abstract class SimpleServer {
-    public static final Charset            ENCODING    = StandardCharsets.UTF_8;
-    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
+    public static final Charset                                          ENCODING                 = StandardCharsets.UTF_8;
+    public static final ThreadPoolExecutor                               THREAD_POOL              = new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), new MyThreadFactory());
     //
-    private final String                   protocol;
-    private final InetSocketAddress        address;
-    private final ServerSocket             serverSocket;
-    private final List<SimpleHandler>      handlers    = new ArrayList<>();
-    private boolean                        stop;
+    public static final String                                           CONTENT_TYPE_FORM_DATA   = "application/x-www-form-urlencoded";
+    public static final String                                           CONTENT_TYPE_JSON        = "application/json";
+    public static final String                                           CONTENT_TYPE_JSON_SCHEMA = "application/schema+json";
+    //
+    private final       String                                           protocol;
+    private final       InetSocketAddress                                address;
+    private final       ServerSocket                                     serverSocket;
+    private final       List<SimpleHandler>                              handlers                 = new ArrayList<>();
+    private final       Map<String, Function<SimpleRequest, SimpleBody>> bodyMakerMap             = new HashMap<>();
+    private             boolean                                          stop;
 
     public SimpleServer(String protocol) {
         this(protocol, getDefaultPort(protocol));
@@ -53,8 +53,14 @@ public abstract class SimpleServer {
         this.protocol = protocol;
         address = new InetSocketAddress("0.0.0.0", port);
         serverSocket = makeServerSocketUnchecked(address);
+
+        bodyMakerMap.put("", LinesBody::new);
+        bodyMakerMap.put(CONTENT_TYPE_FORM_DATA, FormDataBody::new);
+        bodyMakerMap.put(CONTENT_TYPE_JSON, JsonBody::new);
+        bodyMakerMap.put(CONTENT_TYPE_JSON_SCHEMA, JsonSchemaBody::new);
     }
 
+    @SuppressWarnings("BusyWait")
     public static void waitForDone() {
         while (0 < THREAD_POOL.getActiveCount()) {
             try {
@@ -74,6 +80,10 @@ public abstract class SimpleServer {
 
     public void addHandler(SimpleHandler handler) {
         handlers.add(handler);
+    }
+
+    public void addBodyMaker(String contentType, Function<SimpleRequest, SimpleBody> bodyMaker) {
+        bodyMakerMap.put(contentType, bodyMaker);
     }
 
     public void start() {
@@ -115,10 +125,15 @@ public abstract class SimpleServer {
         System.out.println(">>> handling " + getProtocol() + " request....");
         try (socket) {
             SimpleRequest request = new SimpleRequest(socket, ENCODING);
-            SimpleHandler handler = determineHandler(request);
-            SimpleResponse response = new SimpleResponse(request, handler);
+            request.setBody(determineBody(request));
+            SimpleResponse response = new SimpleResponse(request);
+            response.setHandler(determineHandler(request));
             request.trace();
             response.handle();
+        } catch (SSLException e) {
+            System.err.println("could not make request due to SSL problem (" + e.getMessage() + ")");
+        } catch (SocketException e) {
+            System.err.println("could not make request due to Socket problem (" + e.getMessage() + ")");
         } catch (IgnoreableError e) {
             System.err.println("ignoreable problem while handling request: " + e.getMessage());
         } catch (Throwable e) {
@@ -132,6 +147,10 @@ public abstract class SimpleServer {
     private SimpleHandler determineHandler(SimpleRequest r) {
         List<SimpleHandler> matches = handlers.stream().filter(h -> h.isMatch(r)).sorted().collect(Collectors.toList());
         return matches.isEmpty() ? null : matches.get(0);
+    }
+
+    public SimpleBody determineBody(SimpleRequest request) {
+        return bodyMakerMap.getOrDefault(request.contentType, bodyMakerMap.get("")).apply(request);
     }
 
     protected static int getDefaultPort(String protocol) {

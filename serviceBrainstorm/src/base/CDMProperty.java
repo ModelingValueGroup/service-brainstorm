@@ -21,6 +21,7 @@ import org.modelingvalue.collections.*;
 import org.modelingvalue.collections.util.*;
 import org.modelingvalue.dclare.*;
 
+@SuppressWarnings("unused")
 public class CDMProperty<O extends CDMObject, T> {
 
     public static final Context<Boolean> STATEFULL = Context.of(false);
@@ -45,7 +46,7 @@ public class CDMProperty<O extends CDMObject, T> {
         return new CDMProperty<>(id, null, containment, null, deriver);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, V def, boolean containment, Function<C, V> deriver) {
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(Object id, @SuppressWarnings("unused") V def, boolean containment, Function<C, V> deriver) {
         return new CDMProperty<>(id, null, containment, null, deriver);
     }
 
@@ -83,6 +84,7 @@ public class CDMProperty<O extends CDMObject, T> {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public T set(O object, T value) {
         return setable.set(object, value);
     }
@@ -127,9 +129,7 @@ public class CDMProperty<O extends CDMObject, T> {
         if (getClass() != obj.getClass())
             return false;
         CDMProperty other = (CDMProperty) obj;
-        if (!setable.equals(other.setable))
-            return false;
-        return true;
+        return setable.equals(other.setable);
     }
 
 }
