@@ -15,7 +15,10 @@
 
 package template;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EksampleOutputView {
     public Object extract(Case x) {
@@ -25,8 +28,9 @@ public class EksampleOutputView {
     private Map<String, Object> extractCase(Case x) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", x.getId().toString());
-        if (x.getPlan() != null) {
-            map.put("plan", extractPlan(x.getPlan()));
+        Plan plan = Case.PLAN.get(x);
+        if (plan != null) {
+            map.put("plan", extractPlan(plan));
         }
         return map;
     }
@@ -34,15 +38,16 @@ public class EksampleOutputView {
     private Map<String, Object> extractPlan(Plan x) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", x.getId().toString());
-        if (x.getTreatments() != null) {
-            map.put("treatments", extractTreatments(x.getTreatments()));
+        org.modelingvalue.collections.List<Treatment> treatments = Plan.TREATMENTS.get(x);
+        if (treatments != null) {
+            map.put("treatments", extractTreatments(treatments));
         }
         return map;
     }
 
     private List<Object> extractTreatments(org.modelingvalue.collections.List<Treatment> x) {
         List<Object> list = new ArrayList<>();
-        x.forEach(xx->list.add(extractTreatment(xx)));
+        x.forEach(xx -> list.add(extractTreatment(xx)));
         return list;
     }
 

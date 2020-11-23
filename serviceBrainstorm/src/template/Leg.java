@@ -21,9 +21,9 @@ import base.CDMProperty;
 
 public class Leg extends CDMObject {
 
-    private static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("CONDITION", true);
+    public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("CONDITION", true);
 
-    private static final CDMClass<Leg>               D_CLASS   = CDMClass.of(Leg.class);
+    private static final CDMClass<Leg>              D_CLASS   = CDMClass.of(Leg.class);
 
     public Leg(Object id) {
         super(id);
@@ -32,14 +32,6 @@ public class Leg extends CDMObject {
     @Override
     public CDMClass<Leg> dClass() {
         return D_CLASS;
-    }
-
-    public Condition getCondition() {
-        return CONDITION.get(this);
-    }
-
-    public void setCondition(Condition condition) {
-        CONDITION.set(this, condition);
     }
 
 }

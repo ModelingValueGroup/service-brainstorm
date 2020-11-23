@@ -31,23 +31,23 @@ class CaseTestStatefull {
     @Test
     void test1() {
         CDMProperty.STATEFULL.run(true, () -> {
-            Case universe = new Case("test");
-            CDMTransaction tx = universe.transaction(() -> {
+            Case _case = new Case("test");
+            CDMTransaction tx = _case.transaction(() -> {
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
                 Leg rigth = new Leg("rigth");
                 Condition condition1 = new Condition("problem1");
                 Condition condition2 = new Condition("problem2");
-                universe.setPerson(person);
-                person.setLegs(List.of(left, rigth));
-                left.setCondition(condition1);
-                rigth.setCondition(condition2);
+                Case.PERSON.set(_case, person);
+                Person.LEGS.set(person, List.of(left, rigth));
+                Leg.CONDITION.set(left, condition1);
+                Leg.CONDITION.set(rigth, condition2);
             });
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertNotNull(universe.getPlan());
-                assertEquals(universe.getPlan().getTreatments().size(), 2);
+                assertNotNull(Case.PLAN.get(_case));
+                assertEquals(Plan.TREATMENTS.get(Case.PLAN.get(_case)).size(), 2);
             });
         });
     }
@@ -55,20 +55,20 @@ class CaseTestStatefull {
     @Test
     void test2() {
         CDMProperty.STATEFULL.run(true, () -> {
-            Case universe = new Case("test");
-            CDMTransaction tx = universe.transaction(() -> {
+            Case _case = new Case("test");
+            CDMTransaction tx = _case.transaction(() -> {
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
                 Leg rigth = new Leg("rigth");
-                universe.setPerson(person);
-                person.setLegs(List.of(left, rigth));
-                left.setCondition(null);
-                rigth.setCondition(null);
+                Case.PERSON.set(_case, person);
+                Person.LEGS.set(person, List.of(left, rigth));
+                Leg.CONDITION.set(left, null);
+                Leg.CONDITION.set(rigth, null);
             });
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertNull(universe.getPlan());
+                assertNull(Case.PLAN.get(_case));
             });
         });
     }

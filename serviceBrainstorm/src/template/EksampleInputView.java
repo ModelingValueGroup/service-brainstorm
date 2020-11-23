@@ -16,21 +16,21 @@
 package template;
 
 import java.util.Map;
-import java.util.*;
-import java.util.stream.*;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.modelingvalue.collections.List;
 
 @SuppressWarnings("unchecked")
 public class EksampleInputView {
     public void augment(Case x, Map<String, Object> map) {
-        x.setPerson(makePerson((Map<String, Object>) map.get("person")));
+        Case.PERSON.set(x, makePerson((Map<String, Object>) map.get("person")));
         /// x.setPlan(...); // not in view
     }
 
     private Person makePerson(Map<String, Object> map) {
         Person x = new Person(map.computeIfAbsent("id", k -> newPersonId()));
-        x.setLegs(makeLegs((java.util.List<Object>) map.get("legs")));
+        Person.LEGS.set(x, makeLegs((java.util.List<Object>) map.get("legs")));
         return x;
     }
 
@@ -44,7 +44,7 @@ public class EksampleInputView {
 
     private Leg makeLeg(Map<String, Object> map) {
         Leg x = new Leg(map.computeIfAbsent("id", k -> newLegId()));
-        x.setCondition(makeCondition((java.util.Map<String, Object>) map.get("condition")));
+        Leg.CONDITION.set(x, makeCondition((java.util.Map<String, Object>) map.get("condition")));
         // no more in view
         return x;
     }

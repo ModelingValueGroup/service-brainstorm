@@ -23,20 +23,12 @@ import base.CDMProperty;
 
 public class Person extends CDMObject {
 
-    private static final CDMProperty<Person, List<Leg>> LEGS    = CDMProperty.of("LEGS", List.of(), true);
+    public static final CDMProperty<Person, List<Leg>> LEGS    = CDMProperty.of("LEGS", List.of(), true);
 
-    private static final CDMClass<Person>               D_CLASS = CDMClass.of(Person.class, LEGS);
+    private static final CDMClass<Person>              D_CLASS = CDMClass.of(Person.class, LEGS);
 
     public Person(Object id) {
         super(id);
-    }
-
-    public List<Leg> getLegs() {
-        return LEGS.get(this);
-    }
-
-    public void setLegs(List<Leg> legs) {
-        LEGS.set(this, legs);
     }
 
     @Override
