@@ -85,7 +85,8 @@ public class TestUtils {
             os.write(bytes);
         }
         try (InputStream is = conn.getInputStream()) {
-            Object ret = Json.fromJson(stream2String(is));
+            String s   = stream2String(is);
+            Object ret = Json.fromJson(s);
             return ret instanceof Map<?, ?> ? (Map<String, Object>) ret : null;
         } finally {
             conn.disconnect();

@@ -15,49 +15,34 @@
 
 package template.views;
 
-import org.modelingvalue.collections.*;
+import org.modelingvalue.collections.Map;
 
-import base.views.*;
-import template.*;
+import base.views.CDMView;
+import template.Case;
+import template.Condition;
+import template.Leg;
+import template.Person;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class EksampleInputView extends CDMView {
-    public void augment(Case x, Map<String, Object> map) {
-        Case.PERSON.set(x, makePerson((Map<String, Object>) map.get("person")));
-        /// x.setPlan(...); // not in view
+    public static void putIntoCase(Case x, Map<String, Object> map) {
+        Case.PERSON.set(x, dispatchMap(map, "person", EksampleInputView::makePerson));
     }
 
-    private Person makePerson(Map<String, Object> map) {
-        if (map == null) {
-            return null;
-        }
+    private static Person makePerson(Map<String, Object> map) {
         Person x = new Person(map.get("id"));
-        Person.LEGS.set(x, makeLegs((List<Object>) map.get("legs")));
-        // no more in view
+        Person.LEGS.set(x, dispatchList(map, "legs", EksampleInputView::makeLeg));
         return x;
     }
 
-    private List<Leg> makeLegs(List<Object> list) {
-        return list == null ? List.of() : list.map(m -> makeLeg((Map<String, Object>) m)).toList();
-    }
-
-    private Leg makeLeg(Map<String, Object> map) {
-        if (map == null) {
-            return null;
-        }
+    private static Leg makeLeg(Map<String, Object> map) {
         Leg x = new Leg(map.get("id"));
-        Leg.CONDITION.set(x, makeCondition((Map<String, Object>) map.get("condition")));
-        // no more in view
+        Leg.CONDITION.set(x, dispatchMap(map, "condition", EksampleInputView::makeCondition));
         return x;
     }
 
-    private Condition makeCondition(Map<String, Object> map) {
-        if (map == null) {
-            return null;
-        }
-        @SuppressWarnings("UnnecessaryLocalVariable")
+    private static Condition makeCondition(Map<String, Object> map) {
         Condition x = new Condition(map.get("id"));
-        // nothing in view
         return x;
     }
 }

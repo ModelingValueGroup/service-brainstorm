@@ -15,47 +15,30 @@
 
 package template.views;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import template.*;
+import org.modelingvalue.collections.Map;
 
-public class EksampleOutputView {
-    public Object extract(Case x) {
-        return extractCase(x);
-    }
+import base.views.CDMView;
+import template.Case;
+import template.Plan;
+import template.Treatment;
 
-    private Map<String, Object> extractCase(Case x) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", x.getId().toString());
-        Plan plan = Case.PLAN.get(x);
-        if (plan != null) {
-            map.put("plan", extractPlan(plan));
-        }
+@SuppressWarnings("UnnecessaryLocalVariable")
+public class EksampleOutputView extends CDMView {
+    public static Object extractCase(Case x) {
+        Map<String, Object> map = createWithId(x);
+        map = addMap(x, map, "plan", Case.PLAN, EksampleOutputView::extractPlan);
         return map;
     }
 
-    private Map<String, Object> extractPlan(Plan x) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", x.getId().toString());
-        org.modelingvalue.collections.List<Treatment> treatments = Plan.TREATMENTS.get(x);
-        if (treatments != null) {
-            map.put("treatments", extractTreatments(treatments));
-        }
+    private static Map<String, Object> extractPlan(Plan x) {
+        Map<String, Object> map = createWithId(x);
+        map = addList(x, map, "treatments", Plan.TREATMENTS, EksampleOutputView::extractTreatment);
         return map;
     }
 
-    private List<Object> extractTreatments(org.modelingvalue.collections.List<Treatment> x) {
-        List<Object> list = new ArrayList<>();
-        x.forEach(xx -> list.add(extractTreatment(xx)));
-        return list;
-    }
-
-    private Map<String, Object> extractTreatment(Treatment x) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", x.getId().toString());
+    private static Map<String, Object> extractTreatment(Treatment x) {
+        Map<String, Object> map = createWithId(x);
         return map;
     }
 }

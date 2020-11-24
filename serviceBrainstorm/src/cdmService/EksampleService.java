@@ -15,15 +15,18 @@
 
 package cdmService;
 
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.modelingvalue.collections.*;
-import org.modelingvalue.json.*;
+import org.modelingvalue.collections.Map;
+import org.modelingvalue.dclare.sync.JsonIC;
 
-import base.*;
-import simpleservice.*;
-import template.*;
-import template.views.*;
+import base.CDMProperty;
+import base.CDMTransaction;
+import simpleservice.SimpleRequest;
+import simpleservice.SimpleResponse;
+import template.Case;
+import template.views.EksampleInputView;
+import template.views.EksampleOutputView;
 
 public class EksampleService {
     public static Handler getHandler() {
@@ -35,9 +38,9 @@ public class EksampleService {
         CDMProperty.STATEFULL.run(false, () -> {
             Object         id = mapIn.get("id");
             Case           c  = new Case(id);
-            CDMTransaction tx = c.transaction(() -> new EksampleInputView().augment(c, mapIn));
+            CDMTransaction tx = c.transaction(() -> EksampleInputView.putIntoCase(c, mapIn));
             tx.stop();
-            tx.waitForEnd().run(() -> result.set(new EksampleOutputView().extract(c)));
+            tx.waitForEnd().run(() -> result.set(EksampleOutputView.extractCase(c)));
         });
         return result.get();
     }
@@ -51,7 +54,7 @@ public class EksampleService {
         public void handle(SimpleRequest request, SimpleResponse response) {
             TokenManager.authorize(request);
             Object o = new EksampleService().handle(castBody(request.getBody()).jsonData);
-            response.addToBody(Json.toJson(o));
+            response.addToBody(JsonIC.toJson(o));
         }
     }
 }

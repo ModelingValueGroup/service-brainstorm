@@ -15,5 +15,54 @@
 
 package base.views;
 
+import java.util.function.Function;
+
+import org.modelingvalue.collections.Entry;
+import org.modelingvalue.collections.List;
+import org.modelingvalue.collections.Map;
+
+import base.CDMObject;
+import base.CDMProperty;
+
+@SuppressWarnings({"unchecked", "SameParameterValue"})
 public class CDMView {
+    protected static <T> T dispatchMap(Map<String, Object> map, String field, Function<Map<String, Object>, T> f) {
+        Object o = map.get(field);
+        return o instanceof Map ? f.apply((Map<String, Object>) o) : null;
+    }
+
+    protected static <T> List<T> dispatchList(Map<String, Object> map, String field, Function<Map<String, Object>, T> f) {
+        Object o = map.get(field);
+        if (o instanceof List) {
+            return ((List<Map<String, Object>>) o).map(f).toList();
+        }
+        return List.of();
+    }
+
+    protected static <OWNER extends CDMObject> Map<String, Object> createWithId(OWNER owner) {
+        return Map.of(Entry.of("id", owner.getId().toString()));
+    }
+
+    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addMap(OWNER owner, Map<String, Object> map, String field, CDMProperty<OWNER, T> prop, Function<T, Object> f) {
+        T obj = prop.get(owner);
+        if (obj != null) {
+            if (map == null) {
+                map = Map.of();
+            }
+            map = map.put(field, f.apply(obj));
+        }
+        return map;
+    }
+
+    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addList(OWNER owner, Map<String, Object> map, String field, CDMProperty<OWNER, List<T>> prop, Function<T, Object> f) {
+        List<T> obj = prop.get(owner);
+        if (obj != null) {
+            if (map == null) {
+                map = Map.of();
+            }
+            map = map.put(field, obj.map(f).toList());
+        }
+        return map;
+    }
+
 }
