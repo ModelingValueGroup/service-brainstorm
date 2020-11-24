@@ -15,18 +15,24 @@
 
 package simpleservice;
 
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.security.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
 
 public class SimpleHttpsServer extends SimpleServer {
     public SimpleHttpsServer() {
         super("https");
     }
 
+    @Override
     protected ServerSocket makeServerSocket(InetSocketAddress address) throws IOException, GeneralSecurityException {
         return getSslServerSocketFactory().createServerSocket(address.getPort(), 0, address.getAddress());
     }
@@ -39,16 +45,9 @@ public class SimpleHttpsServer extends SimpleServer {
 
     private static KeyManagerFactory getKeyManagerFactory() throws IOException, GeneralSecurityException {
         String keyStorePassword = "xxxxxx";
-        Path   keyStorePath     = Files.createTempFile("keystore", ".jks");
+        Path keyStorePath = Files.createTempFile("keystore", ".jks");
         Files.delete(keyStorePath);
-        CliUtil.execute(
-                "keytool" +
-                        " -genkeypair" +
-                        " -keyalg       RSA" +
-                        " -alias        selfsigned" +
-                        " -keystore     " + keyStorePath +
-                        " -storepass    " + keyStorePassword +
-                        " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
+        CliUtil.execute("keytool" + " -genkeypair" + " -keyalg       RSA" + " -alias        selfsigned" + " -keystore     " + keyStorePath + " -storepass    " + keyStorePassword + " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(Files.newInputStream(keyStorePath), keyStorePassword.toCharArray());

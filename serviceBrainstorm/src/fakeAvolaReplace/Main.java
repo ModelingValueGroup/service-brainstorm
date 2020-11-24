@@ -15,10 +15,14 @@
 
 package fakeAvolaReplace;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import simpleservice.*;
-import simpleservice.SimpleBody.*;
+import simpleservice.SimpleBody.LinesBody;
+import simpleservice.SimpleDualServer;
+import simpleservice.SimpleRequest;
+import simpleservice.SimpleResponse;
 
 public class Main {
     //    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
@@ -33,7 +37,7 @@ public class Main {
     public static void main(String... args) {
         SimpleDualServer server = new SimpleDualServer();
 
-        server.addHandler(new ConnectTokenHandler()/**/.with("POST"/**/, "/connect/token",LinesBody.class));
+        server.addHandler(new ConnectTokenHandler()/**/.with("POST"/**/, "/connect/token", LinesBody.class));
         server.addHandler(new ApiSettingsHandler()/* */.with("GET"/* */, "/api/Settings", LinesBody.class));
         server.addHandler(new DecisionListHandler()/**/.with("GET"/* */, "/api/ApiExecution/decisions/list", LinesBody.class));
         server.addHandler(new ExecuteHandler()/*     */.with("POST"/**/, "/api/ApiExecution/execute", LinesBody.class));
@@ -74,20 +78,21 @@ public class Main {
     public static class DecisionListHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            response.addToBody( readResource("decision-list.json"));
+            response.addToBody(readResource("decision-list.json"));
         }
     }
 
     public static class ExecuteHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            response.addToBody( readResource("execute.json"));
+            response.addToBody(readResource("execute.json"));
         }
     }
 
     public static class DefaultHandler extends HandlerBase<LinesBody> {
+        @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            response.addToBody( Arrays.asList("{", "   'error': 'resistence is futile'", "}"));
+            response.addToBody(Arrays.asList("{", "   'error': 'resistence is futile'", "}"));
         }
     }
 }

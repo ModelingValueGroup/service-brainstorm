@@ -15,10 +15,15 @@
 
 package simpleservice;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
-import fakeAvolaReplace.*;
+import fakeAvolaReplace.HandlerBase;
 
 public abstract class SimpleHandlerBase<BODY extends SimpleBody> implements SimpleHandler {
     protected String      methodPattern;
@@ -56,23 +61,23 @@ public abstract class SimpleHandlerBase<BODY extends SimpleBody> implements Simp
         return pathPattern;
     }
 
+    @Override
     public boolean isMatch(SimpleRequest r) {
-        return (getPathPattern() == null || r.path.matches(getPathPattern()))
-                && (getMethodPattern() == null || r.method.matches(getMethodPattern()))
-                && (bodyClass == null || bodyClass.isAssignableFrom(r.getBody().getClass()));
+        return (getPathPattern() == null || r.path.matches(getPathPattern())) && (getMethodPattern() == null || r.method.matches(getMethodPattern())) && (bodyClass == null || bodyClass.isAssignableFrom(r.getBody().getClass()));
     }
 
+    @Override
     public int compareTo(SimpleHandler o) {
-        Comparator<String>        keyComparator = Comparator.nullsLast(Comparator.comparingInt(String::length));
-        Comparator<SimpleHandler> m             = Comparator.comparing(SimpleHandler::getMethodPattern, keyComparator);
-        Comparator<SimpleHandler> p             = Comparator.comparing(SimpleHandler::getPathPattern, keyComparator);
+        Comparator<String> keyComparator = Comparator.nullsLast(Comparator.comparingInt(String::length));
+        Comparator<SimpleHandler> m = Comparator.comparing(SimpleHandler::getMethodPattern, keyComparator);
+        Comparator<SimpleHandler> p = Comparator.comparing(SimpleHandler::getPathPattern, keyComparator);
 
         return m.thenComparing(p).compare(this, o);
     }
 
     public static List<String> readResource(String name) {
-        List<String> l        = new ArrayList<>();
-        String       fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
+        List<String> l = new ArrayList<>();
+        String fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
             String line;
             while ((line = br.readLine()) != null) {
