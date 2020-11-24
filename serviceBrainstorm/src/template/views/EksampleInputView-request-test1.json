@@ -5,12 +5,14 @@
     "legs": [
       {
         "id": "left",
+        "length": 50,
         "condition": {
           "id": "problem1"
         }
       },
       {
         "id": "right",
+        "length": 199,
         "condition": {
           "id": "problem2"
         }

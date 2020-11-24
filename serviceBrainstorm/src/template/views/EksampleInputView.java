@@ -38,6 +38,7 @@ public class EksampleInputView extends CDMView {
     private static Leg makeLeg(Map<String, Object> map) {
         Leg x = new Leg(map.get("id"));
         Leg.CONDITION.set(x, dispatchMap(map, "condition", EksampleInputView::makeCondition));
+        Leg.LENGTH.set(x, dispatchInteger(map, "length"));
         return x;
     }
 

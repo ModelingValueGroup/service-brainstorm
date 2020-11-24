@@ -35,13 +35,15 @@ class CaseTestStatefull {
             CDMTransaction tx = _case.transaction(() -> {
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
-                Leg rigth = new Leg("rigth");
+                Leg right = new Leg("right");
                 Condition condition1 = new Condition("problem1");
                 Condition condition2 = new Condition("problem2");
                 Case.PERSON.set(_case, person);
-                Person.LEGS.set(person, List.of(left, rigth));
+                Person.LEGS.set(person, List.of(left, right));
                 Leg.CONDITION.set(left, condition1);
-                Leg.CONDITION.set(rigth, condition2);
+                Leg.CONDITION.set(right, condition2);
+                Leg.LENGTH.set(left, 50);
+                Leg.LENGTH.set(right, 199);
             });
             tx.stop();
             State result = tx.waitForEnd();
@@ -59,11 +61,13 @@ class CaseTestStatefull {
             CDMTransaction tx = _case.transaction(() -> {
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
-                Leg rigth = new Leg("rigth");
+                Leg right = new Leg("right");
                 Case.PERSON.set(_case, person);
-                Person.LEGS.set(person, List.of(left, rigth));
+                Person.LEGS.set(person, List.of(left, right));
                 Leg.CONDITION.set(left, null);
-                Leg.CONDITION.set(rigth, null);
+                Leg.CONDITION.set(right, null);
+                Leg.LENGTH.set(left, 50);
+                Leg.LENGTH.set(right, 199);
             });
             tx.stop();
             State result = tx.waitForEnd();

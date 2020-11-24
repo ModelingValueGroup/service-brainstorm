@@ -27,13 +27,13 @@ import template.Treatment;
 public class EksampleOutputView extends CDMView {
     public static Object extractCase(Case x) {
         Map<String, Object> map = createWithId(x);
-        map = addMap(x, map, "plan", Case.PLAN, EksampleOutputView::extractPlan);
+        map = addMap(x, map, Case.PLAN, EksampleOutputView::extractPlan);
         return map;
     }
 
     private static Map<String, Object> extractPlan(Plan x) {
         Map<String, Object> map = createWithId(x);
-        map = addList(x, map, "treatments", Plan.TREATMENTS, EksampleOutputView::extractTreatment);
+        map = addList(x, map, Plan.TREATMENTS, EksampleOutputView::extractTreatment);
         return map;
     }
 

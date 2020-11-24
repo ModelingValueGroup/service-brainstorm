@@ -78,8 +78,29 @@ public class ServerTests {
     @Test
     public void eksampleTest1() {
         Assertions.assertDoesNotThrow(() -> {
-            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\",\n" + "        \"condition\": {\n" + "          \"id\": \"problem1\"\n" + "        }\n" + "      },\n" + "      {\n" + "        \"id\": \"right\",\n" + "        \"condition\": {\n" + "          \"id\": \"problem2\"\n" + "        }\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
+            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" +
+                    "  \"id\": \"test\",\n" +
+                    "  \"person\": {\n" +
+                    "    \"id\": \"Wim\",\n" +
+                    "    \"legs\": [\n" +
+                    "      {\n" +
+                    "        \"id\": \"left\",\n" +
+                    "        \"length\": 50,\n" +
+                    "        \"condition\": {\n" +
+                    "          \"id\": \"problem1\"\n" +
+                    "        }\n" +
+                    "      },\n" +
+                    "      {\n" +
+                    "        \"id\": \"right\",\n" +
+                    "        \"length\": 199,\n" +
+                    "        \"condition\": {\n" +
+                    "          \"id\": \"problem2\"\n" +
+                    "        }\n" +
+                    "      }\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "}");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
             Assertions.assertEquals(2, outputMap.size());
@@ -112,8 +133,8 @@ public class ServerTests {
     @Test
     public void eksampleTest2() {
         Assertions.assertDoesNotThrow(() -> {
-            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
+            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
             Assertions.assertEquals(1, outputMap.size());

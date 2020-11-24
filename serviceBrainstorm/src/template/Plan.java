@@ -17,6 +17,8 @@ package template;
 
 import static base.CDMTransaction.cdmUniverse;
 
+import java.util.function.Function;
+
 import org.modelingvalue.collections.List;
 
 import base.CDMClass;
@@ -24,11 +26,19 @@ import base.CDMObject;
 import base.CDMProperty;
 
 public class Plan extends CDMObject {
+    public static final  Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
+        Person person = Case.PERSON.get((Case) cdmUniverse());
+        return Person.LEGS.get(person)
+                //.filter(leg -> Leg.LENGTH.get(leg) < 100)
+                .map(Leg.CONDITION::get)
+                //.filter(Condition.SERIOUS::get)
+                .notNull()
+                .map(Treatment::new)
+                .toList();
+    };
 
-    public static final CDMProperty<Plan, List<Treatment>> TREATMENTS = CDMProperty.of("TREATMENTS", List.of(), true,                          //
-            p -> Person.LEGS.get(Case.PERSON.get((Case) cdmUniverse())).map(Leg.CONDITION::get).notNull().map(Treatment::new).toList());
-
-    private static final CDMClass<Plan>                    D_CLASS    = CDMClass.of(Plan.class, TREATMENTS);
+    public static final  CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("treatments", List.of(), true, TREATMENT_RULE);
+    private static final CDMClass<Plan>                     D_CLASS        = CDMClass.of(Plan.class, TREATMENTS);
 
     public Plan(Object id) {
         super(id);

@@ -20,10 +20,10 @@ import base.CDMObject;
 import base.CDMProperty;
 
 public class Leg extends CDMObject {
+    public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("condition", true);
+    public static final CDMProperty<Leg, Integer>   LENGTH    = CDMProperty.of("length", 100);
 
-    public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("CONDITION", true);
-
-    private static final CDMClass<Leg>              D_CLASS   = CDMClass.of(Leg.class);
+    private static final CDMClass<Leg> D_CLASS = CDMClass.of(Leg.class);
 
     public Leg(Object id) {
         super(id);

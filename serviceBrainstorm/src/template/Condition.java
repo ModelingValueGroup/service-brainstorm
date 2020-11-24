@@ -17,10 +17,11 @@ package template;
 
 import base.CDMClass;
 import base.CDMObject;
+import base.CDMProperty;
 
 public class Condition extends CDMObject {
-
-    private static final CDMClass<Condition> D_CLASS = CDMClass.of(Condition.class);
+    private static final CDMClass<Condition>             D_CLASS = CDMClass.of(Condition.class);
+    public static final  CDMProperty<Condition, Boolean> SERIOUS = CDMProperty.of("serious", false, false);
 
     public Condition(Object id) {
         super(id);

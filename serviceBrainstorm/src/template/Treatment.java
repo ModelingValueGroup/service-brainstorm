@@ -19,7 +19,6 @@ import base.CDMClass;
 import base.CDMObject;
 
 public class Treatment extends CDMObject {
-
     private static final CDMClass<Treatment> D_CLASS = CDMClass.of(Treatment.class);
 
     public Treatment(Object id) {

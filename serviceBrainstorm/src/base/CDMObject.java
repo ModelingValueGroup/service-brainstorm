@@ -18,7 +18,6 @@ package base;
 import org.modelingvalue.dclare.*;
 
 public abstract class CDMObject implements Mutable {
-
     private final Object id;
 
     public CDMObject(Object id) {

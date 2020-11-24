@@ -26,6 +26,11 @@ import base.CDMProperty;
 
 @SuppressWarnings({"unchecked", "SameParameterValue"})
 public class CDMView {
+    protected static Integer dispatchInteger(Map<String, Object> map, String field) {
+        Object o = map.get(field);
+        return o instanceof Number ? ((Number) o).intValue() : null;
+    }
+
     protected static <T> T dispatchMap(Map<String, Object> map, String field, Function<Map<String, Object>, T> f) {
         Object o = map.get(field);
         return o instanceof Map ? f.apply((Map<String, Object>) o) : null;
@@ -43,24 +48,24 @@ public class CDMView {
         return Map.of(Entry.of("id", owner.getId().toString()));
     }
 
-    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addMap(OWNER owner, Map<String, Object> map, String field, CDMProperty<OWNER, T> prop, Function<T, Object> f) {
+    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addMap(OWNER owner, Map<String, Object> map, CDMProperty<OWNER, T> prop, Function<T, Object> f) {
         T obj = prop.get(owner);
         if (obj != null) {
             if (map == null) {
                 map = Map.of();
             }
-            map = map.put(field, f.apply(obj));
+            map = map.put(prop.getName(), f.apply(obj));
         }
         return map;
     }
 
-    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addList(OWNER owner, Map<String, Object> map, String field, CDMProperty<OWNER, List<T>> prop, Function<T, Object> f) {
+    protected static <OWNER extends CDMObject, T extends CDMObject> Map<String, Object> addList(OWNER owner, Map<String, Object> map, CDMProperty<OWNER, List<T>> prop, Function<T, Object> f) {
         List<T> obj = prop.get(owner);
         if (obj != null) {
             if (map == null) {
                 map = Map.of();
             }
-            map = map.put(field, obj.map(f).toList());
+            map = map.put(prop.getName(), obj.map(f).toList());
         }
         return map;
     }
