@@ -64,6 +64,7 @@ public class SimpleResponse {
         writeLines(body);
 
         request.writer.flush();
+        request.writer.close();
     }
 
     public void trace() {
