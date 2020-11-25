@@ -20,6 +20,7 @@ import static cdmService.TestUtils.TEST_HTTP_PORT;
 import static cdmService.TestUtils.makeTestUrl;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
@@ -132,13 +133,22 @@ public class ServerTests {
     @Test
     public void eksampleTest2() {
         Assertions.assertDoesNotThrow(() -> {
-            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
-            Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
+            for (int i = 0; i<100; i++) {
+                try {
+                    URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
+                    Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
+                    Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
 
-            Assertions.assertEquals(1, outputMap.size());
-            Assertions.assertNotNull(outputMap.get("id"));
-            Assertions.assertEquals("test", outputMap.get("id"));
+                    Assertions.assertEquals(1, outputMap.size());
+                    Assertions.assertNotNull(outputMap.get("id"));
+                    Assertions.assertEquals("test", outputMap.get("id"));
+                } catch (SocketException e) {
+                    if (i == 10 || !e.getMessage().equals("Connection reset")) {
+                        throw e;
+                    }
+                    System.err.println("strange... the connection was reset... try again (" + i + ")");
+                }
+            }
         });
     }
 
