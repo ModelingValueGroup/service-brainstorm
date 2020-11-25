@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: "attach git head"
-        run: git checkout "${GITHUB_REF#refs/heads/}"; git config user.name; git config user.email
+        run: git checkout "${GITHUB_REF#refs/heads/}"
 
       - name: "setup JDK"
         uses: actions/setup-java@v1
@@ -28,6 +28,8 @@ jobs:
 
       - name: "prepare ant"
         run:  |
+          git config user.name
+          git config user.email
           cat <<EOF >build.properties
           jdk.home.11=$JAVA_HOME
           path.variable.maven_repository=$HOME/.m2/repository
