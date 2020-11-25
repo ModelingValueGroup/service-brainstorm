@@ -136,6 +136,8 @@ public class ServerTests {
         Assertions.assertDoesNotThrow(() -> {
             List<SocketException> l = new ArrayList<>();
             for (int i = 0; i<100; i++) {
+                System.err.println("e try again (" + i + ")");
+                System.out.println("o try again (" + i + ")");
                 try {
                     URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
                     Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
@@ -146,14 +148,15 @@ public class ServerTests {
                     Assertions.assertEquals("test", outputMap.get("id"));
                 } catch (SocketException e) {
                     if (i == 10) {
-                        throw e;
+                        break;
                     }
-                    System.err.println("strange... the connection was reset... try again (" + i + ")");
+                    System.err.println("e strange... the connection was reset... try again (" + i + ")");
+                    System.out.println("o strange... the connection was reset... try again (" + i + ")");
                     l.add(e);
                 }
             }
             if (!l.isEmpty()) {
-                System.err.println("Some SocketExceptions were thrown!");
+                System.err.println("" + l.size() + " SocketExceptions were thrown !");
                 l.forEach(e -> {
                     System.err.println("===============================================");
                     e.printStackTrace();
