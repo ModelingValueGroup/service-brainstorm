@@ -143,7 +143,7 @@ public class ServerTests {
                     Assertions.assertNotNull(outputMap.get("id"));
                     Assertions.assertEquals("test", outputMap.get("id"));
                 } catch (SocketException e) {
-                    if (i == 10 || !e.getMessage().equals("Connection reset")) {
+                    if (i == 10) {
                         throw e;
                     }
                     System.err.println("strange... the connection was reset... try again (" + i + ")");
