@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -133,6 +134,7 @@ public class ServerTests {
     @Test
     public void eksampleTest2() {
         Assertions.assertDoesNotThrow(() -> {
+            List<SocketException> l = new ArrayList<>();
             for (int i = 0; i<100; i++) {
                 try {
                     URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
@@ -147,7 +149,16 @@ public class ServerTests {
                         throw e;
                     }
                     System.err.println("strange... the connection was reset... try again (" + i + ")");
+                    l.add(e);
                 }
+            }
+            if (!l.isEmpty()) {
+                System.err.println("Some SocketExceptions were thrown!");
+                l.forEach(e -> {
+                    System.err.println("===============================================");
+                    e.printStackTrace();
+                });
+                throw new Error("Some SocketExceptions were thrown!");
             }
         });
     }
