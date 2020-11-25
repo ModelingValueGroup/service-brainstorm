@@ -23,19 +23,17 @@ public class CDMTransaction extends UniverseTransaction {
     private static final boolean    STATEFULL = CDMProperty.STATEFULL.get();
     public static final ContextPool THE_POOL  = ContextThread.createPool();
 
-    private final Runnable          init;
-
     public CDMTransaction(CDMUniverse id, Runnable init) {
         super(id, THE_POOL, null, MAX_IN_IN_QUEUE, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
-        this.init = init;
-    }
-
-    @Override
-    protected void init() {
         put("$init", () -> {
             universe().init();
             init.run();
         });
+    }
+
+    @Override
+    protected void init() {
+        // keep this to avoid the super implementation, the constructor above does the alternative we want.
     }
 
     public static CDMUniverse cdmUniverse() {
