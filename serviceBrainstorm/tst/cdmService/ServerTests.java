@@ -131,20 +131,15 @@ public class ServerTests {
     @SuppressWarnings("unchecked")
     @Test
     public void eksampleTest2() {
-        System.err.println("TOMTOMTOM AAA");
         Assertions.assertDoesNotThrow(() -> {
-            System.err.println("TOMTOMTOM BBB");
             URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
             Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
-            System.err.println("TOMTOMTOM CCC");
             Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
-            System.err.println("TOMTOMTOM DDD");
 
             Assertions.assertEquals(1, outputMap.size());
             Assertions.assertNotNull(outputMap.get("id"));
             Assertions.assertEquals("test", outputMap.get("id"));
         });
-        System.err.println("TOMTOMTOM XXX");
     }
 
     //=========================================================================================================================================================
