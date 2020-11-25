@@ -23,27 +23,27 @@ import template.Condition;
 import template.Leg;
 import template.Person;
 
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class EksampleInputView extends CDMView {
     public static void putIntoCase(Case x, Map<String, Object> map) {
-        Case.PERSON.set(x, dispatchMap(map, "person", EksampleInputView::makePerson));
+        setFromMap(x, map, Case.PERSON, EksampleInputView::makePerson);
     }
 
     private static Person makePerson(Map<String, Object> map) {
         Person x = new Person(map.get("id"));
-        Person.LEGS.set(x, dispatchList(map, "legs", EksampleInputView::makeLeg));
+        setFromList(x, map, Person.LEGS, EksampleInputView::makeLeg);
         return x;
     }
 
     private static Leg makeLeg(Map<String, Object> map) {
         Leg x = new Leg(map.get("id"));
-        Leg.CONDITION.set(x, dispatchMap(map, "condition", EksampleInputView::makeCondition));
-        Leg.LENGTH.set(x, dispatchInteger(map, "length"));
+        setFromMap(x, map, Leg.CONDITION, EksampleInputView::makeCondition);
+        setInteger(x, map, Leg.LENGTH);
         return x;
     }
 
     private static Condition makeCondition(Map<String, Object> map) {
         Condition x = new Condition(map.get("id"));
+        setBoolean(x, map, Condition.SERIOUS);
         return x;
     }
 }

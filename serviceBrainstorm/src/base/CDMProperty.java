@@ -102,6 +102,10 @@ public class CDMProperty<O extends CDMObject, T> {
         return setable.get(object);
     }
 
+    public T getDefault() {
+        return setable.getDefault();
+    }
+
     public <E> Collection<E> getCollection(O object) {
         return setable.getCollection(object);
     }

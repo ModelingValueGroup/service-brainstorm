@@ -28,13 +28,14 @@ public class Case extends CDMUniverse {
         return someLegHasCondition ? new Plan(c) : null;
     };
 
-    public static final  CDMProperty<Case, Person> PERSON  = CDMProperty.of("person", true);
-    public static final  CDMProperty<Case, Plan>   PLAN    = CDMProperty.of("plan", true, PLAN_RULE);
-    private static final CDMClass<Case>            D_CLASS = CDMClass.of(Case.class, PERSON, PLAN);
+    public static final CDMProperty<Case, Person> PERSON = CDMProperty.of("person", true);
+    public static final CDMProperty<Case, Plan>   PLAN   = CDMProperty.of("plan", true, PLAN_RULE);
 
     public Case(Object id) {
         super(id);
     }
+
+    private static final CDMClass<Case> D_CLASS = CDMClass.of(Case.class, PERSON, PLAN);
 
     @Override
     public CDMClass<Case> dClass() {

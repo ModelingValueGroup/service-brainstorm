@@ -78,15 +78,15 @@ public class ServerTests {
     @Test
     public void eksampleTest1() {
         Assertions.assertDoesNotThrow(() -> {
-            URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" +
+            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
+            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
                     "  \"id\": \"test\",\n" +
                     "  \"person\": {\n" +
                     "    \"id\": \"Wim\",\n" +
                     "    \"legs\": [\n" +
                     "      {\n" +
                     "        \"id\": \"left\",\n" +
-                    "        \"length\": 50,\n" +
+                    "        \"length\": 150,\n" +
                     "        \"condition\": {\n" +
                     "          \"id\": \"problem1\"\n" +
                     "        }\n" +
@@ -95,7 +95,8 @@ public class ServerTests {
                     "        \"id\": \"right\",\n" +
                     "        \"length\": 199,\n" +
                     "        \"condition\": {\n" +
-                    "          \"id\": \"problem2\"\n" +
+                    "          \"id\": \"problem2\",\n" +
+                    "          \"serious\": true\n" +
                     "        }\n" +
                     "      }\n" +
                     "    ]\n" +
@@ -117,15 +118,13 @@ public class ServerTests {
             Assertions.assertTrue(List.class.isAssignableFrom(plan.get("treatments").getClass()));
             List<Object> treatments = (List<Object>) plan.get("treatments");
 
-            Assertions.assertEquals(2, treatments.size());
-            for (int i : new int[]{0, 1}) {
-                Assertions.assertTrue(Map.class.isAssignableFrom(treatments.get(i).getClass()));
-                Map<String, Object> treatment = (Map<String, Object>) treatments.get(i);
+            Assertions.assertEquals(1, treatments.size());
+            Assertions.assertTrue(Map.class.isAssignableFrom(treatments.get(0).getClass()));
+            Map<String, Object> treatment = (Map<String, Object>) treatments.get(0);
 
-                Assertions.assertEquals(1, treatment.size());
-                Assertions.assertNotNull(treatment.get("id"));
-                Assertions.assertEquals("Condition:problem" + (i + 1), treatment.get("id"));
-            }
+            Assertions.assertEquals(1, treatment.size());
+            Assertions.assertNotNull(treatment.get("id"));
+            Assertions.assertEquals("Condition:problem2", treatment.get("id"));
         });
     }
 

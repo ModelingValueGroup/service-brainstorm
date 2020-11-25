@@ -26,24 +26,33 @@ import base.CDMProperty;
 
 @SuppressWarnings({"unchecked", "SameParameterValue"})
 public class CDMView {
-    protected static Integer dispatchInteger(Map<String, Object> map, String field) {
-        Object o = map.get(field);
-        return o instanceof Number ? ((Number) o).intValue() : null;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public static <OWNER extends CDMObject, T> void setFromMap(OWNER x, Map<String, Object> map, CDMProperty<OWNER, T> prop, Function<Map<String, Object>, T> f) {
+        Object o = map.get(prop.getName());
+        prop.set(x, o instanceof Map ? f.apply((Map<String, Object>) o) : prop.getDefault());
     }
 
-    protected static <T> T dispatchMap(Map<String, Object> map, String field, Function<Map<String, Object>, T> f) {
-        Object o = map.get(field);
-        return o instanceof Map ? f.apply((Map<String, Object>) o) : null;
+    public static <OWNER extends CDMObject, T> void setFromList(OWNER x, Map<String, Object> map, CDMProperty<OWNER, List<T>> prop, Function<Map<String, Object>, T> f) {
+        Object o = map.get(prop.getName());
+        prop.set(x, o instanceof List ? ((List<Map<String, Object>>) o).map(f).toList() : prop.getDefault());
     }
 
-    protected static <T> List<T> dispatchList(Map<String, Object> map, String field, Function<Map<String, Object>, T> f) {
-        Object o = map.get(field);
-        if (o instanceof List) {
-            return ((List<Map<String, Object>>) o).map(f).toList();
-        }
-        return List.of();
+    public static <OWNER extends CDMObject> void setInteger(OWNER x, Map<String, Object> map, CDMProperty<OWNER, Integer> prop) {
+        Object o = map.get(prop.getName());
+        prop.set(x, o instanceof Number ? ((Number) o).intValue() : prop.getDefault());
     }
 
+    public static <OWNER extends CDMObject> void setBoolean(OWNER x, Map<String, Object> map, CDMProperty<OWNER, Boolean> prop) {
+        Object o = map.get(prop.getName());
+        prop.set(x, o instanceof Boolean ? (Boolean) o : prop.getDefault());
+    }
+
+    public static <OWNER extends CDMObject> void setString(OWNER x, Map<String, Object> map, CDMProperty<OWNER, String> prop) {
+        Object o = map.get(prop.getName());
+        prop.set(x, o instanceof String ? (String) o : prop.getDefault());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected static <OWNER extends CDMObject> Map<String, Object> createWithId(OWNER owner) {
         return Map.of(Entry.of("id", owner.getId().toString()));
     }
@@ -69,5 +78,4 @@ public class CDMView {
         }
         return map;
     }
-
 }

@@ -23,11 +23,11 @@ public class Leg extends CDMObject {
     public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("condition", true);
     public static final CDMProperty<Leg, Integer>   LENGTH    = CDMProperty.of("length", 100);
 
-    private static final CDMClass<Leg> D_CLASS = CDMClass.of(Leg.class);
-
     public Leg(Object id) {
         super(id);
     }
+
+    private static final CDMClass<Leg> D_CLASS = CDMClass.of(Leg.class);
 
     @Override
     public CDMClass<Leg> dClass() {

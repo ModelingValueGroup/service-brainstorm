@@ -44,12 +44,19 @@ class CaseTestStateless {
                 Leg.CONDITION.set(right, condition2);
                 Leg.LENGTH.set(left, 50);
                 Leg.LENGTH.set(right, 199);
+                Condition.SERIOUS.set(condition2, true);
             });
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertNotNull(Case.PLAN.get(_case));
-                assertEquals(Plan.TREATMENTS.get(Case.PLAN.get(_case)).size(), 2);
+                System.err.println("case       = " + _case);
+                Plan plan = Case.PLAN.get(_case);
+                assertNotNull(plan);
+                System.err.println("plan       = " + plan);
+                List<Treatment> treatments = Plan.TREATMENTS.get(plan);
+                System.err.println("treatments = " + treatments);
+                assertNotNull(treatments);
+                assertEquals(treatments.size(), 1);
             });
         });
     }

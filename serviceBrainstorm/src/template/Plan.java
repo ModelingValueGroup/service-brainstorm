@@ -26,23 +26,23 @@ import base.CDMObject;
 import base.CDMProperty;
 
 public class Plan extends CDMObject {
-    public static final  Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
+    public static final Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
         Person person = Case.PERSON.get((Case) cdmUniverse());
         return Person.LEGS.get(person)
-                //.filter(leg -> Leg.LENGTH.get(leg) < 100)
+                .filter(leg -> 100 <= Leg.LENGTH.get(leg))
                 .map(Leg.CONDITION::get)
-                //.filter(Condition.SERIOUS::get)
+                .filter(Condition.SERIOUS::get)
                 .notNull()
                 .map(Treatment::new)
                 .toList();
     };
-
-    public static final  CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("treatments", List.of(), true, TREATMENT_RULE);
-    private static final CDMClass<Plan>                     D_CLASS        = CDMClass.of(Plan.class, TREATMENTS);
+    public static final CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("treatments", List.of(), true, TREATMENT_RULE);
 
     public Plan(Object id) {
         super(id);
     }
+
+    private static final CDMClass<Plan> D_CLASS = CDMClass.of(Plan.class, TREATMENTS);
 
     @Override
     public CDMClass<Plan> dClass() {
