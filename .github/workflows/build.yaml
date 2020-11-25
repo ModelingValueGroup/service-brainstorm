@@ -9,6 +9,10 @@ jobs:
       GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
       ALLREP_TOKEN: "${{secrets.ALLREP_TOKEN}}"
     steps:
+      - run: |
+          git config user.name || echo AIAIAI1
+          git config user.email || echo AIAIAI2
+
       - name: "checkout"
         uses: actions/checkout@v1
 
@@ -26,10 +30,12 @@ jobs:
       - name: "get buildtools"
         uses: ModelingValueGroup/buildtools@master
 
+      - run: |
+          git config user.name || echo AIAIAI3
+          git config user.email || echo AIAIAI4
+
       - name: "prepare ant"
         run:  |
-          git config user.name
-          git config user.email
           cat <<EOF >build.properties
           jdk.home.11=$JAVA_HOME
           path.variable.maven_repository=$HOME/.m2/repository
@@ -46,6 +52,10 @@ jobs:
         run:  |
           . <(java -jar ~/buildtools.jar)
           pushBackToGithub
+
+      - run: |
+          git config user.name || echo AIAIAI5
+          git config user.email || echo AIAIAI6
 
       - name: "download dependencies (as mentioned in pom)"
         run:  |
