@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
 import org.modelingvalue.json.Json;
+import org.modelingvalue.json.JsonPrettyfier;
 
 import simpleservice.SimpleResponse;
 import simpleservice.Utils;
@@ -51,7 +52,7 @@ public class TestUtils {
     public static void apiCheck(String entryPoint, String in, String out) throws IOException {
         Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson(in);
         Map<String, Object> outputMap = performRequestJson2Json(makeTestUrl(entryPoint), inputMap);
-        Assertions.assertEquals(out, Json.pretty(Json.toJson(outputMap)));
+        Assertions.assertEquals(out, JsonPrettyfier.pretty(Json.toJson(outputMap)));
     }
 
     @SuppressWarnings("unchecked")
