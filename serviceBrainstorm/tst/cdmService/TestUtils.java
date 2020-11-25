@@ -33,12 +33,36 @@ import org.junit.jupiter.api.Assertions;
 import org.modelingvalue.json.Json;
 
 import simpleservice.SimpleResponse;
+import simpleservice.Utils;
 
 @SuppressWarnings("unused")
 public class TestUtils {
-    public static final int TEST_HTTP_PORT  = 11080;
-    public static final int TEST_HTTPS_PORT = 11443;
-    private static String   recycleToken;
+    public static final int    TEST_HTTP_PORT  = 11080;
+    public static final int    TEST_HTTPS_PORT = 11443;
+    private static      String recycleToken;
+
+    public static void apiCheck(String entryPoint, String name) throws IOException {
+        String inJson  = String.join("\n", Utils.readResource(name + "-in.json", TestUtils.class));
+        String outJson = String.join("\n", Utils.readResource(name + "-out.json", TestUtils.class));
+        apiCheck(entryPoint, inJson, outJson);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void apiCheck(String entryPoint, String in, String out) throws IOException {
+        Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson(in);
+        Map<String, Object> outputMap = performRequestJson2Json(makeTestUrl(entryPoint), inputMap);
+        Assertions.assertEquals(out, Json.pretty(Json.toJson(outputMap)));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> apiCheck(String path) throws IOException {
+        URLConnection conn = makeTestUrl(path).openConnection();
+        conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
+        String text   = stream2String((InputStream) conn.getContent());
+        Object answer = Json.fromJson(text);
+        Assertions.assertTrue(answer instanceof Map);
+        return (Map<String, Object>) answer;
+    }
 
     static String getFreshToken() throws IOException {
         return getFreshTokenMap().get("access_token").toString();
@@ -52,32 +76,32 @@ public class TestUtils {
     }
 
     static Map<String, Object> getFreshTokenMap() throws IOException {
-        URL url = makeTestUrl(Api.TOKEN_PATH);
+        URL                 url = makeTestUrl(Api.TOKEN_PATH);
         Map<String, Object> map = new HashMap<>();
         map.put("grant_type", "client_credentials");
         map.put("scope", "cdm-api");
         map.put("client_id", "cdm-test");
         map.put("client_secret", "cdm-not-so-secret");
 
-        return performRequestForm2Json(url, false, map);
+        return performRequestForm2Json(url, map);
     }
 
-    public static Map<String, Object> performRequestForm2Json(URL url, boolean bearer, Map<String, Object> map) throws IOException {
-        return performRequest2Json(url, "application/x-www-form-urlencoded", bearer, SimpleResponse.renderFormData(map).getBytes());
+    private static Map<String, Object> performRequestForm2Json(URL url, Map<String, Object> map) throws IOException {
+        return performRequest2Json(url, "application/x-www-form-urlencoded", false, SimpleResponse.renderFormData(map).getBytes());
     }
 
-    public static Map<String, Object> performRequestJson2Json(URL url, boolean bearer, Map<String, Object> map) throws IOException {
-        return performRequest2Json(url, "application/json", bearer, Json.toJson(map).getBytes());
+    private static Map<String, Object> performRequestJson2Json(URL url, Map<String, Object> map) throws IOException {
+        return performRequest2Json(url, "application/json", true, Json.toJson(map).getBytes());
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> performRequest2Json(URL url, String contentType, boolean bearer, byte[] bytes) throws IOException {
+    private static Map<String, Object> performRequest2Json(URL url, String contentType, boolean authorize, byte[] bytes) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
         conn.setFixedLengthStreamingMode(bytes.length);
         conn.setRequestProperty("Content-Type", contentType);
-        if (bearer) {
+        if (authorize) {
             conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
         }
         conn.connect();
@@ -91,16 +115,6 @@ public class TestUtils {
         } finally {
             conn.disconnect();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> apiCall(String path) throws IOException {
-        URLConnection conn = makeTestUrl(path).openConnection();
-        conn.setRequestProperty("Authorization", "Bearer " + getRecycledToken());
-        String text = stream2String((InputStream) conn.getContent());
-        Object answer = Json.fromJson(text);
-        Assertions.assertTrue(answer instanceof Map);
-        return (Map<String, Object>) answer;
     }
 
     public static URL makeTestUrl(String path) throws MalformedURLException {

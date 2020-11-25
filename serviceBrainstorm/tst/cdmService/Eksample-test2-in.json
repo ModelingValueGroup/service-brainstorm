@@ -4,7 +4,11 @@
     "id": "Wim",
     "legs": [
       {
-        "id": "left"
+        "id": "left",
+        "length": 150,
+        "condition": {
+          "id": "problem1"
+        }
       },
       {
         "id": "right"

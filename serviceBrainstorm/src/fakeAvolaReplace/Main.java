@@ -23,6 +23,7 @@ import simpleservice.SimpleBody.LinesBody;
 import simpleservice.SimpleDualServer;
 import simpleservice.SimpleRequest;
 import simpleservice.SimpleResponse;
+import simpleservice.Utils;
 
 public class Main {
     //    public static final String AVOLA_AUTHORITY_URL        = "https://login.avo.la";
@@ -78,14 +79,14 @@ public class Main {
     public static class DecisionListHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            response.addToBody(readResource("decision-list.json"));
+            response.addToBody(Utils.readResource("decision-list.json", Main.class));
         }
     }
 
     public static class ExecuteHandler extends HandlerBase<LinesBody> {
         @Override
         public void handle(SimpleRequest request, SimpleResponse response) {
-            response.addToBody(readResource("execute.json"));
+            response.addToBody(Utils.readResource("execute.json", Main.class));
         }
     }
 

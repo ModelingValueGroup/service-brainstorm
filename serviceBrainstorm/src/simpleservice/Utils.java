@@ -15,9 +15,29 @@
 
 package simpleservice;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-public class CliUtil {
+public class Utils {
+    public static List<String> readResource(String name, Class<?> nextTo) {
+        List<String> l        = new ArrayList<>();
+        String       fullName = nextTo.getPackageName().replace('.', '/') + '/' + name;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(nextTo.getClassLoader().getResourceAsStream(fullName))))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                l.add(line);
+            }
+        } catch (IOException e) {
+            throw new Error("problem reading " + name, e);
+        }
+        return l;
+    }
+
     public static void execute(String command) {
         try {
             Runtime run    = Runtime.getRuntime();

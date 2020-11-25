@@ -31,8 +31,8 @@ public class Plan extends CDMObject {
         return Person.LEGS.get(person)
                 .filter(leg -> 100 <= Leg.LENGTH.get(leg))
                 .map(Leg.CONDITION::get)
-                .filter(Condition.SERIOUS::get)
                 .notNull()
+                .filter(Condition.SERIOUS::get)
                 .map(Treatment::new)
                 .toList();
     };

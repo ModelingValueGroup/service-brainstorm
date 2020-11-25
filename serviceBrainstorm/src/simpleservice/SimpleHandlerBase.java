@@ -15,15 +15,7 @@
 
 package simpleservice;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-
-import fakeAvolaReplace.HandlerBase;
 
 public abstract class SimpleHandlerBase<BODY extends SimpleBody> implements SimpleHandler {
     protected String      methodPattern;
@@ -75,17 +67,4 @@ public abstract class SimpleHandlerBase<BODY extends SimpleBody> implements Simp
         return m.thenComparing(p).compare(this, o);
     }
 
-    public static List<String> readResource(String name) {
-        List<String> l = new ArrayList<>();
-        String fullName = HandlerBase.class.getPackageName().replace('.', '/') + '/' + name;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(HandlerBase.class.getClassLoader().getResourceAsStream(fullName))))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                l.add(line);
-            }
-        } catch (IOException e) {
-            throw new Error("problem reading " + name, e);
-        }
-        return l;
-    }
 }

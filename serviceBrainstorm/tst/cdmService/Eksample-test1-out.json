@@ -4,9 +4,6 @@
     "id": "Case:test",
     "treatments": [
       {
-        "id": "Condition:problem1"
-      },
-      {
         "id": "Condition:problem2"
       }
     ]

@@ -17,21 +17,15 @@ package cdmService;
 
 import static cdmService.TestUtils.TEST_HTTPS_PORT;
 import static cdmService.TestUtils.TEST_HTTP_PORT;
-import static cdmService.TestUtils.makeTestUrl;
 
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.modelingvalue.json.Json;
 
 import config.Config;
 
@@ -70,100 +64,21 @@ public class ServerTests {
     @Test
     public void apiInfoTest() {
         Assertions.assertDoesNotThrow(() -> {
-            Map<String, Object> map = TestUtils.apiCall(Api.INFO_PATH);
+            Map<String, Object> map = TestUtils.apiCheck(Api.INFO_PATH);
+
             Assertions.assertEquals(5, map.size());
             Assertions.assertEquals(Api.API_ENDPOINT, map.get("apiEndpoint"));
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void eksampleTest1() {
-        Assertions.assertDoesNotThrow(() -> {
-            URL url = makeTestUrl(Api.EKSAMPLE_PATH);
-            Map<String, Object> inputMap = (Map<String, Object>) Json.fromJson("{\n" +
-                    "  \"id\": \"test\",\n" +
-                    "  \"person\": {\n" +
-                    "    \"id\": \"Wim\",\n" +
-                    "    \"legs\": [\n" +
-                    "      {\n" +
-                    "        \"id\": \"left\",\n" +
-                    "        \"length\": 150,\n" +
-                    "        \"condition\": {\n" +
-                    "          \"id\": \"problem1\"\n" +
-                    "        }\n" +
-                    "      },\n" +
-                    "      {\n" +
-                    "        \"id\": \"right\",\n" +
-                    "        \"length\": 199,\n" +
-                    "        \"condition\": {\n" +
-                    "          \"id\": \"problem2\",\n" +
-                    "          \"serious\": true\n" +
-                    "        }\n" +
-                    "      }\n" +
-                    "    ]\n" +
-                    "  }\n" +
-                    "}");
-            Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
-
-            Assertions.assertEquals(2, outputMap.size());
-            Assertions.assertNotNull(outputMap.get("id"));
-            Assertions.assertEquals("test", outputMap.get("id"));
-            Assertions.assertNotNull(outputMap.get("plan"));
-            Assertions.assertTrue(Map.class.isAssignableFrom(outputMap.get("plan").getClass()));
-            Map<String, Object> plan = (Map<String, Object>) outputMap.get("plan");
-
-            Assertions.assertEquals(2, plan.size());
-            Assertions.assertNotNull(plan.get("id"));
-            Assertions.assertEquals("Case:test", plan.get("id"));
-            Assertions.assertNotNull(plan.get("treatments"));
-            Assertions.assertTrue(List.class.isAssignableFrom(plan.get("treatments").getClass()));
-            List<Object> treatments = (List<Object>) plan.get("treatments");
-
-            Assertions.assertEquals(1, treatments.size());
-            Assertions.assertTrue(Map.class.isAssignableFrom(treatments.get(0).getClass()));
-            Map<String, Object> treatment = (Map<String, Object>) treatments.get(0);
-
-            Assertions.assertEquals(1, treatment.size());
-            Assertions.assertNotNull(treatment.get("id"));
-            Assertions.assertEquals("Condition:problem2", treatment.get("id"));
-        });
+    public void eksampleTest1() throws IOException {
+        TestUtils.apiCheck(Api.EKSAMPLE_PATH, "Eksample-test1");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void eksampleTest2() {
-        Assertions.assertDoesNotThrow(() -> {
-            List<SocketException> l = new ArrayList<>();
-            for (int i = 0; i<100; i++) {
-                System.err.println("e try again (" + i + ")");
-                System.out.println("o try again (" + i + ")");
-                try {
-                    URL                 url       = makeTestUrl(Api.EKSAMPLE_PATH);
-                    Map<String, Object> inputMap  = (Map<String, Object>) Json.fromJson("{\n" + "  \"id\": \"test\",\n" + "  \"person\": {\n" + "    \"id\": \"Wim\",\n" + "    \"legs\": [\n" + "      {\n" + "        \"id\": \"left\"\n" + "      },\n" + "      {\n" + "        \"id\": \"right\"\n" + "      }\n" + "    ]\n" + "  }\n" + "}");
-                    Map<String, Object> outputMap = TestUtils.performRequestJson2Json(url, true, inputMap);
-
-                    Assertions.assertEquals(1, outputMap.size());
-                    Assertions.assertNotNull(outputMap.get("id"));
-                    Assertions.assertEquals("test", outputMap.get("id"));
-                } catch (SocketException e) {
-                    if (i == 10) {
-                        break;
-                    }
-                    System.err.println("e strange... the connection was reset... try again (" + i + ")");
-                    System.out.println("o strange... the connection was reset... try again (" + i + ")");
-                    l.add(e);
-                }
-            }
-            if (!l.isEmpty()) {
-                System.err.println("" + l.size() + " SocketExceptions were thrown !");
-                l.forEach(e -> {
-                    System.err.println("===============================================");
-                    e.printStackTrace();
-                });
-                throw new Error("Some SocketExceptions were thrown!");
-            }
-        });
+    public void eksampleTest2() throws IOException {
+        TestUtils.apiCheck(Api.EKSAMPLE_PATH, "Eksample-test2");
     }
 
     //=========================================================================================================================================================
@@ -171,19 +86,15 @@ public class ServerTests {
 
     @BeforeAll
     public static void startServer() {
-        System.err.println(".... starting server");
         System.setProperty(Config.DEFAULT_CONFIG_PROPERTY, "{\"http\":{\"port\":" + TEST_HTTP_PORT + "},\"https\":{\"port\":" + TEST_HTTPS_PORT + "}}");
         server = CdmServer.create();
         server.start();
-        System.err.println(".... server started");
     }
 
     @AfterAll
     public static void stopServer() {
-        System.err.println(".... stopping server");
         server.stop();
         server.waitForDone();
         server = null;
-        System.err.println(".... server stopped");
     }
 }

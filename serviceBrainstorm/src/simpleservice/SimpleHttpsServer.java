@@ -47,7 +47,7 @@ public class SimpleHttpsServer extends SimpleServer {
         String keyStorePassword = "xxxxxx";
         Path keyStorePath = Files.createTempFile("keystore", ".jks");
         Files.delete(keyStorePath);
-        CliUtil.execute("keytool" + " -genkeypair" + " -keyalg       RSA" + " -alias        selfsigned" + " -keystore     " + keyStorePath + " -storepass    " + keyStorePassword + " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
+        Utils.execute("keytool" + " -genkeypair" + " -keyalg       RSA" + " -alias        selfsigned" + " -keystore     " + keyStorePath + " -storepass    " + keyStorePassword + " -dname        CN=localhost,OU=dev,O=mvg,L=here,C=NL");
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(Files.newInputStream(keyStorePath), keyStorePassword.toCharArray());
