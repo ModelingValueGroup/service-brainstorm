@@ -18,10 +18,11 @@ package template;
 import java.util.function.Function;
 
 import base.CDMClass;
+import base.CDMObject;
 import base.CDMProperty;
 import base.CDMUniverse;
 
-public class Case extends CDMUniverse {
+public class Case extends CDMObject {
     public static final Function<Case, Plan> PLAN_RULE = c -> {
         Person  person              = Case.PERSON.get(c);
         boolean someLegHasCondition = Person.LEGS.get(person).anyMatch(l -> Leg.CONDITION.get(l) != null);

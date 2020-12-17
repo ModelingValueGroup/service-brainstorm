@@ -31,14 +31,16 @@ class CaseTestStatefull {
     @Test
     void test1() {
         CDMProperty.STATEFULL.run(true, () -> {
-            Case _case = new Case("test");
-            CDMTransaction tx = _case.transaction(() -> {
+        	Message m = new Message("message");
+            Case c = new Case("test");
+            CDMTransaction tx = m.transaction(() -> {
+            	Message.CASE.set(m, c);
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
                 Leg right = new Leg("right");
                 Condition condition1 = new Condition("problem1");
                 Condition condition2 = new Condition("problem2");
-                Case.PERSON.set(_case, person);
+                Case.PERSON.set(c, person);
                 Person.LEGS.set(person, List.of(left, right));
                 Leg.CONDITION.set(left, condition1);
                 Leg.CONDITION.set(right, condition2);
@@ -49,8 +51,8 @@ class CaseTestStatefull {
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                System.err.println("case       = " + _case);
-                Plan plan = Case.PLAN.get(_case);
+                System.err.println("case       = " + c);
+                Plan plan = Case.PLAN.get(c);
                 assertNotNull(plan);
                 System.err.println("plan       = " + plan);
                 List<Treatment> treatments = Plan.TREATMENTS.get(plan);
@@ -64,12 +66,14 @@ class CaseTestStatefull {
     @Test
     void test2() {
         CDMProperty.STATEFULL.run(true, () -> {
-            Case _case = new Case("test");
-            CDMTransaction tx = _case.transaction(() -> {
+        	Message m = new Message("test");
+            Case c = new Case("test");
+            CDMTransaction tx = m.transaction(() -> {
+            	Message.CASE.set(m, c);
                 Person person = new Person("Wim");
                 Leg left = new Leg("left");
                 Leg right = new Leg("right");
-                Case.PERSON.set(_case, person);
+                Case.PERSON.set(c, person);
                 Person.LEGS.set(person, List.of(left, right));
                 Leg.CONDITION.set(left, null);
                 Leg.CONDITION.set(right, null);
@@ -79,7 +83,7 @@ class CaseTestStatefull {
             tx.stop();
             State result = tx.waitForEnd();
             result.run(() -> {
-                assertNull(Case.PLAN.get(_case));
+                assertNull(Case.PLAN.get(c));
             });
         });
     }

@@ -25,6 +25,8 @@ import base.CDMTransaction;
 import simpleservice.SimpleRequest;
 import simpleservice.SimpleResponse;
 import template.Case;
+import template.Message;
+import template.Stock;
 import template.views.EksampleInputView;
 import template.views.EksampleOutputView;
 
@@ -36,9 +38,14 @@ public class EksampleService {
     Object handle(Map<String, Object> mapIn) {
         AtomicReference<Object> result = new AtomicReference<>();
         CDMProperty.STATEFULL.run(false, () -> {
-            Object         id = mapIn.get("id");
-            Case           c  = new Case(id);
-            CDMTransaction tx = c.transaction(() -> EksampleInputView.putIntoCase(c, mapIn));
+            Object   id = mapIn.get("id");
+            Message  m  = new Message("message");  //universe
+        	Stock    s  = new Stock("stock");  // singleton contains stock of all medicines.
+            Case     c  = new Case(id);
+            CDMTransaction tx = m.transaction(() -> {
+                Message.CASE.set(m, c);
+            	EksampleInputView.putIntoCase(c, mapIn);	
+            });
             tx.stop();
             tx.waitForEnd().run(() -> result.set(EksampleOutputView.extractCase(c)));
         });

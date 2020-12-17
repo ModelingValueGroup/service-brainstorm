@@ -27,7 +27,7 @@ import base.CDMProperty;
 
 public class Plan extends CDMObject {
     public static final Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
-        Person person = Case.PERSON.get((Case) cdmUniverse());
+        Person person = Case.PERSON.get((Case) Message.CASE.get(((Message)cdmUniverse())));
         return Person.LEGS.get(person)
                 .filter(leg -> 100 <= Leg.LENGTH.get(leg))
                 .map(Leg.CONDITION::get)
