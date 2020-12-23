@@ -20,7 +20,7 @@ import base.CDMObject;
 import base.CDMProperty;
 
 public class Condition extends CDMObject {
-    public static final CDMProperty<Condition, Boolean> SERIOUS = CDMProperty.of("serious", false, false);
+    public static final CDMProperty<Condition, Boolean> SERIOUS = CDMProperty.of("serious", false);
 
     public Condition(Object id) {
         super(id);

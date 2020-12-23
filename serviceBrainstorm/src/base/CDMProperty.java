@@ -25,66 +25,51 @@ import org.modelingvalue.dclare.Constant;
 import org.modelingvalue.dclare.Observed;
 import org.modelingvalue.dclare.Observer;
 import org.modelingvalue.dclare.Setable;
+import org.modelingvalue.dclare.SetableModifier;
 
 @SuppressWarnings("unused")
 public class CDMProperty<O extends CDMObject, T> {
 
     public static final Context<Boolean> STATEFULL = Context.of(false);
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name) {
-        return new CDMProperty<>(name, null, false, null, null);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, null, null, null, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def) {
-        return new CDMProperty<>(name, def, false, null, null);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, def, null, null, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, Function<C, V> deriver) {
-        return new CDMProperty<>(name, null, false, null, deriver);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, Function<C, V> deriver, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, null, null, deriver, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Function<C, V> deriver) {
-        return new CDMProperty<>(name, def, false, null, deriver);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Function<C, V> deriver, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, def, null, deriver, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, boolean containment, Function<C, V> deriver) {
-        return new CDMProperty<>(name, null, containment, null, deriver);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Supplier<CDMProperty<?, ?>> opposite, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, def, opposite, null, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, @SuppressWarnings("unused") V def, boolean containment, Function<C, V> deriver) {
-        return new CDMProperty<>(name, null, containment, null, deriver);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, Supplier<CDMProperty<?, ?>> opposite, Function<C, V> deriver, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, null, opposite, deriver, modifiers);
     }
 
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, boolean containment) {
-        return new CDMProperty<>(name, null, containment, null, null);
-    }
-
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, boolean containment) {
-        return new CDMProperty<>(name, def, containment, null, null);
-    }
-
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Supplier<CDMProperty<?, ?>> opposite) {
-        return new CDMProperty<>(name, def, false, opposite, null);
-    }
-
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, Supplier<CDMProperty<?, ?>> opposite, Function<C, V> deriver) {
-        return new CDMProperty<>(name, null, false, opposite, deriver);
-    }
-
-    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Supplier<CDMProperty<?, ?>> opposite, Function<C, V> deriver) {
-        return new CDMProperty<>(name, def, false, opposite, deriver);
+    public static <C extends CDMObject, V> CDMProperty<C, V> of(String name, V def, Supplier<CDMProperty<?, ?>> opposite, Function<C, V> deriver, SetableModifier... modifiers) {
+        return new CDMProperty<>(name, def, opposite, deriver, modifiers);
     }
 
     private final Setable<O, T> setable;
     private final Observer<O>   observer;
 
-    protected CDMProperty(String name, T def, boolean containment, Supplier<CDMProperty<?, ?>> opposite, Function<O, T> deriver) {
+    protected CDMProperty(String name, T def, Supplier<CDMProperty<?, ?>> opposite, Function<O, T> deriver, SetableModifier... modifiers) {
         Supplier<Setable<?, ?>> os = opposite != null ? () -> opposite.get().setable : null;
         if (STATEFULL.get()) {
-            this.setable = Observed.of(name, false, def, containment, os, null, true);
+            this.setable = Observed.of(name, def, os, modifiers);
             this.observer = deriver != null ? Observer.of(name, o -> set(o, deriver.apply(o))) : null;
         } else {
-            this.setable = Constant.of(name, def, containment, os, null, deriver, true);
+            this.setable = Constant.of(name, def, os, deriver, modifiers);
             this.observer = null;
         }
     }

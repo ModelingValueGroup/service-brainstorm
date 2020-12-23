@@ -16,13 +16,14 @@
 package template;
 
 import org.modelingvalue.collections.List;
+import org.modelingvalue.dclare.SetableModifier;
 
 import base.CDMClass;
 import base.CDMObject;
 import base.CDMProperty;
 
 public class Person extends CDMObject {
-    public static final CDMProperty<Person, List<Leg>> LEGS = CDMProperty.of("legs", List.of(), true);
+    public static final CDMProperty<Person, List<Leg>> LEGS = CDMProperty.of("legs", List.of(), SetableModifier.containment);
 
     public Person(Object id) {
         super(id);
