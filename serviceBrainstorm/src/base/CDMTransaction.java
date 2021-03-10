@@ -15,16 +15,18 @@
 
 package base;
 
-import org.modelingvalue.collections.util.*;
-import org.modelingvalue.collections.util.ContextThread.*;
-import org.modelingvalue.dclare.*;
+import org.modelingvalue.collections.util.ContextThread;
+import org.modelingvalue.collections.util.ContextThread.ContextPool;
+import org.modelingvalue.dclare.LeafTransaction;
+import org.modelingvalue.dclare.State;
+import org.modelingvalue.dclare.UniverseTransaction;
 
 public class CDMTransaction extends UniverseTransaction {
     private static final boolean    STATEFULL = CDMProperty.STATEFULL.get();
     public static final ContextPool THE_POOL  = ContextThread.createPool();
 
     public CDMTransaction(CDMUniverse id, Runnable init) {
-        super(id, THE_POOL, null, MAX_IN_IN_QUEUE, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
+        super(id, THE_POOL, null, MAX_IN_IN_QUEUE, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_FORWARD_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
         put("$init", () -> {
             universe().init();
             init.run();
