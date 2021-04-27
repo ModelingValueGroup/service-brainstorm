@@ -26,7 +26,7 @@ public class CDMTransaction extends UniverseTransaction {
     public static final ContextPool THE_POOL  = ContextThread.createPool();
 
     public CDMTransaction(CDMUniverse id, Runnable init) {
-        super(id, THE_POOL, null, MAX_IN_IN_QUEUE, true, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_FORWARD_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
+        super(id, THE_POOL, null, MAX_IN_IN_QUEUE, true, MAX_TOTAL_NR_OF_CHANGES, MAX_NR_OF_CHANGES, MAX_NR_OF_OBSERVED, MAX_NR_OF_OBSERVERS, MAX_NR_OF_HISTORY, null);
         put("$init", () -> {
             universe().init();
             init.run();
