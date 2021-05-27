@@ -16,11 +16,11 @@
 package template;
 
 import static base.CDMTransaction.cdmUniverse;
+import static org.modelingvalue.dclare.CoreSetableModifier.containment;
 
 import java.util.function.Function;
 
 import org.modelingvalue.collections.List;
-import org.modelingvalue.dclare.SetableModifier;
 
 import base.CDMClass;
 import base.CDMObject;
@@ -28,11 +28,11 @@ import base.CDMProperty;
 
 public class Plan extends CDMObject {
     public static final Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
-                                                                              Person person = Case.PERSON.get((Case) Message.CASE.get(((Message) cdmUniverse())));
-                                                                              return Person.LEGS.get(person).filter(leg -> 100 <= Leg.LENGTH.get(leg))                               //
-                                                                                      .map(Leg.CONDITION::get).notNull().filter(Condition.SERIOUS::get).map(Treatment::new).toList();
-                                                                          };
-    public static final CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("treatments", List.of(), TREATMENT_RULE, SetableModifier.containment);
+        Person person = Case.PERSON.get((Case) Message.CASE.get(((Message) cdmUniverse())));
+        return Person.LEGS.get(person).filter(leg -> 100 <= Leg.LENGTH.get(leg))                               //
+                .map(Leg.CONDITION::get).notNull().filter(Condition.SERIOUS::get).map(Treatment::new).toList();
+    };
+    public static final CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("treatments", List.of(), TREATMENT_RULE, containment);
 
     public Plan(Object id) {
         super(id);

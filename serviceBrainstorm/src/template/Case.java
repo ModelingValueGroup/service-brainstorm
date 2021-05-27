@@ -15,23 +15,23 @@
 
 package template;
 
-import java.util.function.Function;
+import static org.modelingvalue.dclare.CoreSetableModifier.containment;
 
-import org.modelingvalue.dclare.SetableModifier;
+import java.util.function.Function;
 
 import base.CDMClass;
 import base.CDMObject;
 import base.CDMProperty;
 
 public class Case extends CDMObject {
-    public static final Function<Case, Plan>      PLAN_RULE = c -> {
-                                                                Person person = Case.PERSON.get(c);
-                                                                boolean someLegHasCondition = Person.LEGS.get(person).anyMatch(l -> Leg.CONDITION.get(l) != null);
-                                                                return someLegHasCondition ? new Plan(c) : null;
-                                                            };
+    public static final Function<Case, Plan> PLAN_RULE = c -> {
+        Person  person              = Case.PERSON.get(c);
+        boolean someLegHasCondition = Person.LEGS.get(person).anyMatch(l -> Leg.CONDITION.get(l) != null);
+        return someLegHasCondition ? new Plan(c) : null;
+    };
 
-    public static final CDMProperty<Case, Person> PERSON    = CDMProperty.of("person", SetableModifier.containment);
-    public static final CDMProperty<Case, Plan>   PLAN      = CDMProperty.of("plan", PLAN_RULE, SetableModifier.containment);
+    public static final CDMProperty<Case, Person> PERSON = CDMProperty.of("person", containment);
+    public static final CDMProperty<Case, Plan>   PLAN   = CDMProperty.of("plan", PLAN_RULE, containment);
 
     public Case(Object id) {
         super(id);

@@ -15,8 +15,9 @@
 
 package template;
 
+import static org.modelingvalue.dclare.CoreSetableModifier.containment;
+
 import org.modelingvalue.dclare.MutableClass;
-import org.modelingvalue.dclare.SetableModifier;
 
 import base.CDMClass;
 import base.CDMProperty;
@@ -24,10 +25,10 @@ import base.CDMUniverse;
 
 public class Message extends CDMUniverse {
 
-    public static final CDMProperty<Message, Case>  CASE    = CDMProperty.of("cases", SetableModifier.containment);
-    public static final CDMProperty<Message, Stock> STOCK   = CDMProperty.of("stock", SetableModifier.containment);
+    public static final CDMProperty<Message, Case>  CASE  = CDMProperty.of("cases", containment);
+    public static final CDMProperty<Message, Stock> STOCK = CDMProperty.of("stock", containment);
 
-    private static final CDMClass<Message>          D_CLASS = CDMClass.of(Message.class);
+    private static final CDMClass<Message> D_CLASS = CDMClass.of(Message.class);
 
     public Message(Object id) {
         super(id);

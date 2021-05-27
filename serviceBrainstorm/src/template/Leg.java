@@ -15,14 +15,14 @@
 
 package template;
 
-import org.modelingvalue.dclare.SetableModifier;
+import static org.modelingvalue.dclare.CoreSetableModifier.containment;
 
 import base.CDMClass;
 import base.CDMObject;
 import base.CDMProperty;
 
 public class Leg extends CDMObject {
-    public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("condition", SetableModifier.containment);
+    public static final CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("condition", containment);
     public static final CDMProperty<Leg, Integer>   LENGTH    = CDMProperty.of("length", 100);
 
     public Leg(Object id) {
