@@ -13,27 +13,33 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.example.hospital.model;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import java.util.function.Function;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+import org.modelingvalue.cdm.base.CDMClass;
+import org.modelingvalue.cdm.base.CDMObject;
+import org.modelingvalue.cdm.base.CDMProperty;
+
+
+public class Case extends CDMObject {
+    public static final Function<Case, Plan> PLAN_RULE = c -> {
+        Person  person              = Case.PERSON.get(c);
+        boolean someLegHasCondition = Person.LEGS.get(person).anyMatch(l -> Leg.CONDITION.get(l) != null);
+        return someLegHasCondition ? new Plan(c) : null;
+    };
+
+    public static final  CDMProperty<Case, Person> PERSON  = CDMProperty.of("=person", true);
+    public static final  CDMProperty<Case, Plan>   PLAN    = CDMProperty.of("=plan", true, PLAN_RULE);
+    public static final  CDMProperty<Case, String> NAME    = CDMProperty.of("=name", null);
+    private static final CDMClass<Case>            D_CLASS = CDMClass.of(Case.class, PERSON, PLAN, NAME);
+
+    public Case(Object id) {
+        super(id);
+    }
+
+    @Override
+    public CDMClass<Case> dClass() {
+        return D_CLASS;
     }
 }

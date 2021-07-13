@@ -13,27 +13,24 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.example.hospital.model;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+import org.modelingvalue.cdm.base.CDMClass;
+import org.modelingvalue.cdm.base.CDMObject;
+import org.modelingvalue.cdm.base.CDMProperty;
+
+public class Leg extends CDMObject {
+    public static final  CDMProperty<Leg, Condition> CONDITION = CDMProperty.of("=condition", true);
+    public static final  CDMProperty<Leg, Integer>   LENGTH    = CDMProperty.of("=length", 100, false);
+    private static final CDMClass<Leg>               D_CLASS   = CDMClass.of(Leg.class, CONDITION, LENGTH);
+
+    public Leg(Object id) {
+        super(id);
+    }
+
+    @Override
+    public CDMClass<Leg> dClass() {
+        return D_CLASS;
     }
 }

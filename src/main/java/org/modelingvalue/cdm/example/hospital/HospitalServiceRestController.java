@@ -13,27 +13,35 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.example.hospital;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import javax.servlet.http.HttpSession;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HospitalServiceRestController {
+    @RequestMapping("/message")
+    public String message(@RequestBody String json, HttpSession session) {
+        try {
+            return HospitalSession.of(session).handleDelta(json);
+        } catch (Exception e) {
+            System.err.println("FAILED... " + e.getMessage());
+            return "{\"error\":\"" + e.getMessage() + "\"}";
+        }
+    }
+
+    @RequestMapping("/init")
+    public String init(@RequestBody String json, HttpSession session) {
+        try {
+            HospitalSession hs = HospitalSession.of(session);
+
+            return hs.init();
+        } catch (Exception e) {
+            System.err.println("FAILED... " + e.getMessage());
+            return "{\"error\":\"" + e.getMessage() + "\"}";
         }
     }
 }

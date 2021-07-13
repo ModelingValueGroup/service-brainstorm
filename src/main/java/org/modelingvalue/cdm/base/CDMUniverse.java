@@ -13,27 +13,17 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.base;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import org.modelingvalue.dclare.Universe;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+public abstract class CDMUniverse extends CDMObject implements Universe {
+    public CDMUniverse(Object id) {
+        super(id);
     }
+
+    public CDMTransaction transaction(Runnable init) {
+        return new CDMTransaction(this, init);
+    }
+
 }

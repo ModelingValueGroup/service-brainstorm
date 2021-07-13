@@ -13,27 +13,37 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.example.hospital.model;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import static org.modelingvalue.cdm.base.CDMTransaction.cdmUniverse;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+import java.util.function.Function;
+
+import org.modelingvalue.cdm.base.CDMClass;
+import org.modelingvalue.cdm.base.CDMObject;
+import org.modelingvalue.cdm.base.CDMProperty;
+import org.modelingvalue.collections.List;
+
+public class Plan extends CDMObject {
+    public static final  Function<Plan, List<Treatment>>    TREATMENT_RULE = __ -> {
+        Person person = Case.PERSON.get(Hospital.CASE.get(((Hospital) cdmUniverse())));
+        return Person.LEGS.get(person)
+                .filter(leg -> 100 <= Leg.LENGTH.get(leg))
+                .map(Leg.CONDITION::get)
+                .notNull()
+                .filter(Condition.SERIOUS::get)
+                .map(Treatment::new)
+                .toList();
+    };
+    public static final  CDMProperty<Plan, List<Treatment>> TREATMENTS     = CDMProperty.of("=treatments", List.of(), true, TREATMENT_RULE);
+    private static final CDMClass<Plan>                     D_CLASS        = CDMClass.of(Plan.class, TREATMENTS);
+
+    public Plan(Object id) {
+        super(id);
+    }
+
+    @Override
+    public CDMClass<Plan> dClass() {
+        return D_CLASS;
     }
 }

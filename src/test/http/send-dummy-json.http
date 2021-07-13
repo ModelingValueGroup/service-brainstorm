@@ -1,0 +1,97 @@
+POST http://localhost:8080/message
+Content-Type: application/json
+
+{
+  "person-0001": {
+    "legs"     : [null, ["leg-0001#l", "leg-0001#r"]]
+  },
+  "leg-0001#l": {
+    "length"   : [null, 88],
+    "condition": [null, "condition-0001"]
+  },
+  "leg-0001#r": {
+    "length"   : [null, 89],
+    "condition": [null, "condition-0002"]
+  },
+  "condition-0001": {
+    "serious"  : [null, false]
+  },
+  "condition-0002": {
+    "serious"  : [null, true]
+  },
+  "case-0001": {
+    "person"   : [null, "person-0001"],
+    "name"     : [null, "my serious case"]
+  },
+  "hospital-1": {
+    "case"     : [null, "case-0001"],
+    "stock"    : [null, "stock-0001"]
+  },
+  "stock-0001": {
+    "medicines": [null, ["medicine-0001","medicine-0002","medicine-0003"]]
+  },
+  "medicine-0001": {
+  },
+  "medicine-0002": {
+  },
+  "medicine-0003": {
+  }
+}
+
+###
+POST http://localhost:8080/init
+Content-Type: application/json
+
+{
+}
+
+###
+POST http://localhost:8080/new
+Content-Type: application/json
+
+[
+   {
+  "$type": "person",
+  "$id": "0001",
+    "legs"     : [
+      {
+        "$type": "leg",
+        "$id": "0001"
+      },
+      {
+        "$type": "leg",
+        "$id": "0002"
+      }
+  },
+  "leg-0001#l": {
+    "length"   : [null, 88],
+    "condition": [null, "condition-0001"]
+  },
+  "leg-0001#r": {
+    "length"   : [null, 89],
+    "condition": [null, "condition-0002"]
+  },
+  "condition-0001": {
+    "serious"  : [null, false]
+  },
+  "condition-0002": {
+    "serious"  : [null, true]
+  },
+  "case-0001": {
+    "person"   : [null, "person-0001"],
+    "name"     : [null, "my serious case"]
+  },
+  "hospital-1": {
+    "case"     : [null, "case-0001"],
+    "stock"    : [null, "stock-0001"]
+  },
+  "stock-0001": {
+    "medicines": [null, ["medicine-0001","medicine-0002","medicine-0003"]]
+  },
+  "medicine-0001": {
+  },
+  "medicine-0002": {
+  },
+  "medicine-0003": {
+  }
+]

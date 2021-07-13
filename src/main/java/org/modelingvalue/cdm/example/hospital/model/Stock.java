@@ -13,27 +13,24 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.example.hospital.model;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import org.modelingvalue.cdm.base.CDMClass;
+import org.modelingvalue.cdm.base.CDMObject;
+import org.modelingvalue.cdm.base.CDMProperty;
+import org.modelingvalue.collections.List;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+
+public class Stock extends CDMObject {
+    public static final  CDMProperty<Stock, List<Medicine>> MEDICINES = CDMProperty.of("=medicines", List.of(), true);
+    private static final CDMClass<Stock>                    D_CLASS   = CDMClass.of(Stock.class, MEDICINES);
+
+    public Stock(Object id) {
+        super(id);
+    }
+
+    @Override
+    public CDMClass<Stock> dClass() {
+        return D_CLASS;
     }
 }

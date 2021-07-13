@@ -13,27 +13,30 @@
 //     Arjan Kok, Carel Bast                                                                                           ~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-defaultTasks("mvgCorrector", "test", "publish", "mvgTagger")
+package org.modelingvalue.cdm.base;
 
-plugins {
-    `java-library`
-    `maven-publish`
-    id("org.springframework.boot") version "2.4.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.modelingvalue.gradle.mvgplugin") version "0.4.34" // must be after io.spring.dependency-management!!!
-}
-dependencies {
-    implementation("org.modelingvalue:dclare:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:immutable-collections:1.5.0-BRANCHED")
-    implementation("org.modelingvalue:mvgjson:1.1.6-BRANCHED")
+import org.modelingvalue.dclare.Setable;
+import org.modelingvalue.dclare.State;
+import org.modelingvalue.dclare.UniverseTransaction;
+import org.modelingvalue.dclare.sync.DeltaAdaptor;
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-publishing {
-    publications {
-        create<MavenPublication>("service-brainstorm") {
-            from(components["java"])
-        }
+public class CDMDeltaAdaptor extends DeltaAdaptor<CDMClass<CDMObject>, CDMObject, Setable<CDMObject, Object>> {
+    public CDMDeltaAdaptor(UniverseTransaction tx, CDMSerializationHelper helper) {
+        super("delta-adaptor", tx, helper);
     }
+
+    @Override
+    public void accept(String delta) {
+        System.err.println();
+        System.err.println("======================== parsing delta....  ============");
+        super.accept(delta);
+    }
+
+    @Override
+    protected void queueDelta(State pre, State post, Boolean last) {
+        System.err.println();
+        System.err.println("======================== making delta....  =============");
+        super.queueDelta(pre, post, last);
+    }
+
 }
